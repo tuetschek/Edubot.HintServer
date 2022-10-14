@@ -1,6 +1,8 @@
 using Edubot.HintServer.Logic;
 using Edubot.HintServer.Logic.Model;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Mvc.Formatters;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using SolrNet;
@@ -11,54 +13,10 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Reflection.PortableExecutable;
+using System.Runtime.CompilerServices;
 using System.Xml.Linq;
 using System.Xml.XPath;
-
-var textFields = new Dictionary<string, double>
-{
-    { "nazev", 10 },
-    { "nazev_lemmatized", 8 },
-    { "nazev_lemmatized_ascii", 6 },
-    { "klicova_slova", 10 },
-    { "klicova_slova_lemmatized", 10 },
-    { "klicova_slova_lemmatized_ascii", 8 },
-    { "popis", 5 },
-    { "popis_lemmatized", 4 },
-    { "popis_lemmatized_ascii", 4 },
-    { "nazev_zdroje", 3 },
-    { "nazev_feedu", 3 },
-    { "url", 3 },
-    { "autor", 3 },
-};
-
-var enumFields = new HashSet<string>
-{
-    "rocnik",
-    "stupen_vzdelavani",
-    "licence",
-    "dostupnost",
-    "typ"
-};
-
-var wizardHintFields = new HashSet<string>
-{
-    "rocnik",
-    "stupen_vzdelavani",
-    "typ"
-};
-
-var searchHintFields = new HashSet<string>
-{
-    "rocnik",
-    "stupen_vzdelavani",
-    "typ"
-};
-
-var boostField = "celkova_reputace";
-
-var idField = "id";
-
-var hintConfig = new HintSystemConfiguration(textFields, enumFields, wizardHintFields, searchHintFields, boostField, idField);
 
 var solrUrl = Environment.GetEnvironmentVariable("APP_URL_SOLR") ?? string.Empty;
 
@@ -72,10 +30,12 @@ builder.Services.AddSignalR(e =>
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 
+HintSystemConfiguration hintConfig = LoadHintConfiguationFromConfig(builder.Configuration);
+
 builder.Services.AddSingleton<HintSystemConfiguration>((x) => hintConfig);
-builder.Services.AddSolrNet<GeneralDocument>(solrUrl);
 builder.Services.AddScoped<HintGenerationManager>();
 
+builder.Services.AddSolrNet<GeneralDocument>(solrUrl);
 var invalidReponseParser = builder.Services.First(x => x.ServiceType.Equals(typeof(ISolrAbstractResponseParser<>)) && x.Lifetime == ServiceLifetime.Transient);
 builder.Services.Remove(invalidReponseParser);
 builder.Services.AddTransient(typeof(ISolrAbstractResponseParser<>), typeof(FixedDefaultResponseParser<>));
@@ -107,6 +67,117 @@ app.MapFallbackToPage("/_Host");
 
 app.Run();
 
+
+HintSystemConfiguration LoadHintConfiguationFromConfig(Microsoft.Extensions.Configuration.ConfigurationManager configuration)
+{
+    if (configuration == null)
+    {
+        throw new ArgumentNullException("AppSettings is missing.");
+    }
+
+    var hintConfiguration = LoadAndValidateSectionFromRoot("HintConfiguration", configuration);
+
+    var boostField = LoadAndValidateString("BoostField", hintConfiguration);
+    var idField = LoadAndValidateString("IdField", hintConfiguration);
+
+    var textFields = new Dictionary<string, double>();
+
+    foreach (var textFieldConfiguration in LoadAndValidateSection("TextFields", hintConfiguration).GetChildren())
+    {
+        var title = LoadAndValidateString("Title", textFieldConfiguration);
+        var boost = LoadAndValidateDouble("Boost", textFieldConfiguration);
+
+        if (textFields.ContainsKey(title))
+        {
+            throw new ArgumentException($"Title \"{title}\" in TextFields is specified more than once.");
+        }
+
+        textFields.Add(title, boost);
+    }
+
+    if (textFields.Count == 0)
+    {
+        throw new ArgumentException("TextFields in HintConfiguration section in AppSettings is missing or empty.");
+    }
+
+    var enumFields = LoadAndValidateStringArrayToHashSet("EnumFields", hintConfiguration);
+    var wizardHintFields = LoadAndValidateStringArrayToHashSet("WizardHintFields", hintConfiguration);
+    var searchHintFields = LoadAndValidateStringArrayToHashSet("SearchHintFields", hintConfiguration);
+
+    return new HintSystemConfiguration(textFields, enumFields, wizardHintFields, searchHintFields, boostField, idField);
+}
+
+IConfigurationSection LoadAndValidateSectionFromRoot(string key, IConfiguration root)
+{
+    var section = root.GetSection(key);
+
+    if (section == null)
+    {
+        throw new ArgumentNullException($"{key} is missing in application configuration.");
+    }
+
+    return section;
+}
+
+IConfigurationSection LoadAndValidateSection(string key, IConfigurationSection parent)
+{
+    var section = parent.GetSection(key);
+
+    if (section == null)
+    {
+        throw new ArgumentNullException($"{key} is missing in {parent.Key}.");
+    }
+
+    return section;
+}
+
+string LoadAndValidateString(string key, IConfigurationSection parent)
+{
+    var value = parent.GetValue<string>(key);
+
+    if (value == null)
+    {
+        throw new ArgumentNullException($"{key} is missing in {parent.Key}.");
+    }
+
+    return value;
+}
+
+double LoadAndValidateDouble(string key, IConfigurationSection parent)
+{
+    var value = parent.GetValue<double?>(key);
+
+    if (value == null)
+    {
+        throw new ArgumentNullException($"{key} is missing or invalid in {parent.Key}.");
+    }
+
+    return value.Value;
+}
+
+HashSet<string> LoadAndValidateStringArrayToHashSet(string key, IConfigurationSection parent)
+{
+    var result = new HashSet<string>();
+
+    var subsection = LoadAndValidateSection(key, parent);
+
+    foreach(var child in subsection.GetChildren())
+    {
+        var field = child.Value;
+
+        if (!result.Add(field))
+        {
+            throw new ArgumentException($"Field \"{field}\" in {key} is specified more than once.");
+        }
+    }
+
+    if (result.Count == 0)
+    {
+        throw new ArgumentNullException($"{key} is empty in {parent.Key}.");
+    }
+
+    return result;
+}
 
 public class FixedDefaultResponseParser<T> : ISolrAbstractResponseParser<T>
 {

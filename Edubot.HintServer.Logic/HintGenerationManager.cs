@@ -24,7 +24,16 @@ namespace Edubot.HintServer.Logic
         {
             var solrQuery = GenerateQuery(request);
 
-            var results = solr.Query(solrQuery, hintConfiguration.QueryOptions);
+            SolrQueryResults<GeneralDocument> results;
+
+            try
+            {
+                results = solr.Query(solrQuery, hintConfiguration.QueryOptions);
+            }
+            catch (Exception ex)
+            {
+                throw new ArgumentException("Error when calling Solr. This indicates that some fields in configuration are invalid. Check Solr's logs.", ex);
+            }
 
             var response = new HintGenerationResponse();
 
