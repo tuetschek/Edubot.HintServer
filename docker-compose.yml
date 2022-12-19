@@ -1,13 +1,11 @@
 version: '3.4'
 
 services:
-  edubot.hintserver.web:
-    image: ${DOCKER_REGISTRY-}edubothintserverweb
+  edubot_hintserver_server:
+    image: ${DOCKER_REGISTRY-}edubot_hintserver_server
     build:
-      context: .
-      dockerfile: Edubot.HintServer.Web/Dockerfile
+      context: Edubot.HintServer.Server   
     ports:
-        - 6180:80  
-    environment:
-        - ASPNETCORE_URLS=http://+:80
-        - APP_URL_SOLR=url # TO BE REPLACED WITH ACTUAL SOLR
+      - 6190:8000
+    volumes:
+      - ./app.config.json:/app.config.json

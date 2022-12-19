@@ -1,0 +1,23 @@
+version: '3.4'
+
+services:
+  edubot_hintserver_server:
+    volumes:
+      - .:/edubot_hintserver_server
+    environment:
+      - DEV_DEBUG=1
+    ports:
+      - 8085:8000
+    networks:
+      - edubot_hintserver_backend
+  edubot_hintserver_solr:
+    image: solr:8.11.1
+    volumes:
+      - /c/docker/newedubot/solr:/var/solr
+    ports:
+      - 8985:8983
+    networks:
+      - edubot_hintserver_backend
+networks:
+  edubot_hintserver_backend:
+    driver: bridge
