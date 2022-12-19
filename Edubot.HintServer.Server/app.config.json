@@ -1,0 +1,899 @@
+{
+  "DefaultConfiguration": {
+    "DefaultCollection": "DevEma"
+  },
+  "Collections": {
+    "DevEma": {
+      "SolrQueryUrlPattern": "http://edubot_hintserver_solr:8983/solr/ema/select?q=(nazev:({textUnquoted})^10 OR nazev_lemmatized:({textUnquoted})^8 OR nazev_lemmatized_ascii:({textUnquoted})^6 OR klicova_slova:({textUnquoted})^10 OR klicova_slova_lemmatized:({textUnquoted})^10 OR klicova_slova_lemmatized_ascii:({textUnquoted})^8 OR popis:({textUnquoted})^5 OR popis_lemmatized:({textUnquoted})^4 OR popis_lemmatized_ascii:({textUnquoted})^4 OR nazev_zdroje:({textUnquoted})^3 OR nazev_feedu:({textUnquoted})^3 OR url_search:({textUnquoted})^3 OR autor:({textUnquoted})^3)&defType=edismax&fl=*,score&start=0&boost=celkova_reputace&sort=score desc&rows=10&wt=json&{hintingparams}",
+      "IdField": "id",
+      "WizardHintFields": [
+        "stupen_vzdelavani",
+        "rocnik",
+        "typ",
+        "jazyk"
+      ],
+      "SearchHintFields": [
+        "stupen_vzdelavani",
+        "rocnik",
+        "typ",
+        "jazyk"
+      ],
+      "DropdownFields": [
+        "typ",
+        "jazyk",
+        "licence",
+        "dostupnost"
+      ],
+      "EnumValues": [
+        {
+          "Id": 125,
+          "Code": "2-P",
+          "Text": "předškolní vzdělávání",
+          "IsUnknown": false,
+          "IsNotRelevant": false
+        },
+        {
+          "Id": 126,
+          "Code": "2-Z",
+          "Text": "základní vzdělávání",
+          "IsUnknown": false,
+          "IsNotRelevant": false
+        },
+        {
+          "Id": 127,
+          "Code": "2-U",
+          "Text": "základní umělecké vzdělávání",
+          "IsUnknown": false,
+          "IsNotRelevant": false
+        },
+        {
+          "Id": 128,
+          "Code": "2-S",
+          "Text": "speciální vzdělávání",
+          "IsUnknown": false,
+          "IsNotRelevant": false
+        },
+        {
+          "Id": 129,
+          "Code": "2-G",
+          "Text": "gymnaziální vzdělávání",
+          "IsUnknown": false,
+          "IsNotRelevant": false
+        },
+        {
+          "Id": 130,
+          "Code": "2-O",
+          "Text": "odborné vzdělávání",
+          "IsUnknown": false,
+          "IsNotRelevant": false
+        },
+        {
+          "Id": 131,
+          "Code": "2-J",
+          "Text": "jazykové vzdělávání",
+          "IsUnknown": false,
+          "IsNotRelevant": false
+        },
+        {
+          "Id": 132,
+          "Code": "2-N",
+          "Text": "neformální vzdělávání",
+          "IsUnknown": false,
+          "IsNotRelevant": false
+        },
+        {
+          "Id": 133,
+          "Code": "2-T",
+          "Text": "terciální vzdělávání",
+          "IsUnknown": false,
+          "IsNotRelevant": false
+        },
+        {
+          "Id": 134,
+          "Code": "2-NR",
+          "Text": "není relevantní",
+          "IsUnknown": false,
+          "IsNotRelevant": false
+        },
+        {
+          "Id": 135,
+          "Code": "2-NU",
+          "Text": "nelze určit",
+          "IsUnknown": false,
+          "IsNotRelevant": false
+        },
+        {
+          "Id": 31,
+          "Code": "3-MS",
+          "Text": "Mateřská škola",
+          "IsUnknown": false,
+          "IsNotRelevant": false
+        },
+        {
+          "Id": 32,
+          "Code": "3-Z13",
+          "Text": "1. až 3. ročník ZŠ",
+          "IsUnknown": false,
+          "IsNotRelevant": false
+        },
+        {
+          "Id": 33,
+          "Code": "3-Z45",
+          "Text": "4. až 5. ročník ZŠ",
+          "IsUnknown": false,
+          "IsNotRelevant": false
+        },
+        {
+          "Id": 34,
+          "Code": "3-Z67",
+          "Text": "6. až 7. ročník ZŠ",
+          "IsUnknown": false,
+          "IsNotRelevant": false
+        },
+        {
+          "Id": 35,
+          "Code": "3-Z89",
+          "Text": "8. až 9. ročník ZŠ",
+          "IsUnknown": false,
+          "IsNotRelevant": false
+        },
+        {
+          "Id": 36,
+          "Code": "3-SS",
+          "Text": "Střední škola",
+          "IsUnknown": false,
+          "IsNotRelevant": false
+        },
+        {
+          "Id": 37,
+          "Code": "3-VS",
+          "Text": "Vysoká škola",
+          "IsUnknown": false,
+          "IsNotRelevant": false
+        },
+        {
+          "Id": 38,
+          "Code": "3-NR",
+          "Text": "Není relevantní",
+          "IsUnknown": false,
+          "IsNotRelevant": false
+        },
+        {
+          "Id": 39,
+          "Code": "3-NU",
+          "Text": "Nelze určit",
+          "IsUnknown": false,
+          "IsNotRelevant": false
+        },
+        {
+          "Id": 40,
+          "Code": "9-01",
+          "Text": "Český jazyk a literatura",
+          "IsUnknown": false,
+          "IsNotRelevant": false
+        },
+        {
+          "Id": 41,
+          "Code": "9-02",
+          "Text": "Cizí jazyk",
+          "IsUnknown": false,
+          "IsNotRelevant": false
+        },
+        {
+          "Id": 42,
+          "Code": "9-03",
+          "Text": "Matematika a její aplikace",
+          "IsUnknown": false,
+          "IsNotRelevant": false
+        },
+        {
+          "Id": 43,
+          "Code": "9-04",
+          "Text": "Člověk a jeho svět",
+          "IsUnknown": false,
+          "IsNotRelevant": false
+        },
+        {
+          "Id": 44,
+          "Code": "9-05",
+          "Text": "Dějepis",
+          "IsUnknown": false,
+          "IsNotRelevant": false
+        },
+        {
+          "Id": 45,
+          "Code": "9-06",
+          "Text": "Výchova k občanství",
+          "IsUnknown": false,
+          "IsNotRelevant": false
+        },
+        {
+          "Id": 46,
+          "Code": "9-07",
+          "Text": "Fyzika",
+          "IsUnknown": false,
+          "IsNotRelevant": false
+        },
+        {
+          "Id": 47,
+          "Code": "9-08",
+          "Text": "Chemie",
+          "IsUnknown": false,
+          "IsNotRelevant": false
+        },
+        {
+          "Id": 48,
+          "Code": "9-09",
+          "Text": "Přírodopis a Biologie",
+          "IsUnknown": false,
+          "IsNotRelevant": false
+        },
+        {
+          "Id": 49,
+          "Code": "9-10",
+          "Text": "Zeměpis, Geografie a Geologie",
+          "IsUnknown": false,
+          "IsNotRelevant": false
+        },
+        {
+          "Id": 50,
+          "Code": "9-11",
+          "Text": "Hudební výchova",
+          "IsUnknown": false,
+          "IsNotRelevant": false
+        },
+        {
+          "Id": 51,
+          "Code": "9-12",
+          "Text": "Výtvarná výchova",
+          "IsUnknown": false,
+          "IsNotRelevant": false
+        },
+        {
+          "Id": 52,
+          "Code": "9-13",
+          "Text": "Tělesná výchova",
+          "IsUnknown": false,
+          "IsNotRelevant": false
+        },
+        {
+          "Id": 53,
+          "Code": "9-14",
+          "Text": "Výchova ke zdraví",
+          "IsUnknown": false,
+          "IsNotRelevant": false
+        },
+        {
+          "Id": 54,
+          "Code": "9-15",
+          "Text": "Člověk a svět práce",
+          "IsUnknown": false,
+          "IsNotRelevant": false
+        },
+        {
+          "Id": 55,
+          "Code": "9-16",
+          "Text": "Dramatická výchova",
+          "IsUnknown": false,
+          "IsNotRelevant": false
+        },
+        {
+          "Id": 56,
+          "Code": "9-17",
+          "Text": "Filmová/Audiovizuální výchova",
+          "IsUnknown": false,
+          "IsNotRelevant": false
+        },
+        {
+          "Id": 57,
+          "Code": "9-18",
+          "Text": "Literárně-dramatický obor",
+          "IsUnknown": false,
+          "IsNotRelevant": false
+        },
+        {
+          "Id": 58,
+          "Code": "9-19",
+          "Text": "Informatika a informační a komunikační technologie",
+          "IsUnknown": false,
+          "IsNotRelevant": false
+        },
+        {
+          "Id": 59,
+          "Code": "9-20",
+          "Text": "Etická výchova",
+          "IsUnknown": false,
+          "IsNotRelevant": false
+        },
+        {
+          "Id": 60,
+          "Code": "9-21",
+          "Text": "Odborné předměty",
+          "IsUnknown": false,
+          "IsNotRelevant": false
+        },
+        {
+          "Id": 61,
+          "Code": "9-22",
+          "Text": "Dítě a jeho tělo",
+          "IsUnknown": false,
+          "IsNotRelevant": false
+        },
+        {
+          "Id": 62,
+          "Code": "9-23",
+          "Text": "Dítě a jeho psychika",
+          "IsUnknown": false,
+          "IsNotRelevant": false
+        },
+        {
+          "Id": 63,
+          "Code": "9-24",
+          "Text": "Dítě a ten druhý",
+          "IsUnknown": false,
+          "IsNotRelevant": false
+        },
+        {
+          "Id": 64,
+          "Code": "9-25",
+          "Text": "Dítě a společnost",
+          "IsUnknown": false,
+          "IsNotRelevant": false
+        },
+        {
+          "Id": 65,
+          "Code": "9-26",
+          "Text": "Dítě a svět",
+          "IsUnknown": false,
+          "IsNotRelevant": false
+        },
+        {
+          "Id": 66,
+          "Code": "9-27",
+          "Text": "Není relevantní",
+          "IsUnknown": false,
+          "IsNotRelevant": false
+        },
+        {
+          "Id": 67,
+          "Code": "9-28",
+          "Text": "Nelze určit",
+          "IsUnknown": false,
+          "IsNotRelevant": false
+        },
+        {
+          "Id": 108,
+          "Code": "8-MS",
+          "Text": "materiál ke stažení",
+          "IsUnknown": false,
+          "IsNotRelevant": false
+        },
+        {
+          "Id": 109,
+          "Code": "8-IC",
+          "Text": "interaktivní cvičení",
+          "IsUnknown": false,
+          "IsNotRelevant": false
+        },
+        {
+          "Id": 110,
+          "Code": "8-CL",
+          "Text": "článek",
+          "IsUnknown": false,
+          "IsNotRelevant": false
+        },
+        {
+          "Id": 111,
+          "Code": "8-WS",
+          "Text": "webová stránka",
+          "IsUnknown": false,
+          "IsNotRelevant": false
+        },
+        {
+          "Id": 112,
+          "Code": "8-AP",
+          "Text": "aplikace či software",
+          "IsUnknown": false,
+          "IsNotRelevant": false
+        },
+        {
+          "Id": 113,
+          "Code": "8-VI",
+          "Text": "video",
+          "IsUnknown": false,
+          "IsNotRelevant": false
+        },
+        {
+          "Id": 114,
+          "Code": "8-OB",
+          "Text": "obrázek",
+          "IsUnknown": false,
+          "IsNotRelevant": false
+        },
+        {
+          "Id": 115,
+          "Code": "8-AU",
+          "Text": "audio",
+          "IsUnknown": false,
+          "IsNotRelevant": false
+        },
+        {
+          "Id": 116,
+          "Code": "8-PL",
+          "Text": "pracovní list",
+          "IsUnknown": false,
+          "IsNotRelevant": false
+        },
+        {
+          "Id": 117,
+          "Code": "8-DI",
+          "Text": "diskuze",
+          "IsUnknown": false,
+          "IsNotRelevant": false
+        },
+        {
+          "Id": 118,
+          "Code": "8-KO",
+          "Text": "kolekce",
+          "IsUnknown": false,
+          "IsNotRelevant": false
+        },
+        {
+          "Id": 119,
+          "Code": "8-PR",
+          "Text": "prezentace",
+          "IsUnknown": false,
+          "IsNotRelevant": false
+        },
+        {
+          "Id": 120,
+          "Code": "8-OK",
+          "Text": "online kurz",
+          "IsUnknown": false,
+          "IsNotRelevant": false
+        },
+        {
+          "Id": 121,
+          "Code": "8-PO",
+          "Text": "portál",
+          "IsUnknown": false,
+          "IsNotRelevant": false
+        },
+        {
+          "Id": 122,
+          "Code": "8-TE",
+          "Text": "test",
+          "IsUnknown": false,
+          "IsNotRelevant": false
+        },
+        {
+          "Id": 123,
+          "Code": "8-PU",
+          "Text": "publikace",
+          "IsUnknown": false,
+          "IsNotRelevant": false
+        },
+        {
+          "Id": 124,
+          "Code": "8-VA",
+          "Text": "vzdělávací akce",
+          "IsUnknown": false,
+          "IsNotRelevant": false
+        },
+        {
+          "Id": 77,
+          "Code": "5-cs",
+          "Text": "Čeština",
+          "IsUnknown": false,
+          "IsNotRelevant": false
+        },
+        {
+          "Id": 78,
+          "Code": "5-la",
+          "Text": "Latina",
+          "IsUnknown": false,
+          "IsNotRelevant": false
+        },
+        {
+          "Id": 79,
+          "Code": "5-en",
+          "Text": "Angličtina",
+          "IsUnknown": false,
+          "IsNotRelevant": false
+        },
+        {
+          "Id": 80,
+          "Code": "5-da",
+          "Text": "Dánština",
+          "IsUnknown": false,
+          "IsNotRelevant": false
+        },
+        {
+          "Id": 81,
+          "Code": "5-et",
+          "Text": "Estonština",
+          "IsUnknown": false,
+          "IsNotRelevant": false
+        },
+        {
+          "Id": 82,
+          "Code": "5-fi",
+          "Text": "Finština",
+          "IsUnknown": false,
+          "IsNotRelevant": false
+        },
+        {
+          "Id": 83,
+          "Code": "5-fr",
+          "Text": "Francouzština",
+          "IsUnknown": false,
+          "IsNotRelevant": false
+        },
+        {
+          "Id": 84,
+          "Code": "5-it",
+          "Text": "Italština",
+          "IsUnknown": false,
+          "IsNotRelevant": false
+        },
+        {
+          "Id": 85,
+          "Code": "5-lt",
+          "Text": "Litevština",
+          "IsUnknown": false,
+          "IsNotRelevant": false
+        },
+        {
+          "Id": 86,
+          "Code": "5-lv",
+          "Text": "Lotyština",
+          "IsUnknown": false,
+          "IsNotRelevant": false
+        },
+        {
+          "Id": 87,
+          "Code": "5-hu",
+          "Text": "Maďarština",
+          "IsUnknown": false,
+          "IsNotRelevant": false
+        },
+        {
+          "Id": 88,
+          "Code": "5-mt",
+          "Text": "Maltština",
+          "IsUnknown": false,
+          "IsNotRelevant": false
+        },
+        {
+          "Id": 89,
+          "Code": "5-de",
+          "Text": "Němčina",
+          "IsUnknown": false,
+          "IsNotRelevant": false
+        },
+        {
+          "Id": 90,
+          "Code": "5-nl",
+          "Text": "Holandština",
+          "IsUnknown": false,
+          "IsNotRelevant": false
+        },
+        {
+          "Id": 91,
+          "Code": "5-pl",
+          "Text": "Polština",
+          "IsUnknown": false,
+          "IsNotRelevant": false
+        },
+        {
+          "Id": 92,
+          "Code": "5-pt",
+          "Text": "Portugalština",
+          "IsUnknown": false,
+          "IsNotRelevant": false
+        },
+        {
+          "Id": 93,
+          "Code": "5-el",
+          "Text": "Řečtina",
+          "IsUnknown": false,
+          "IsNotRelevant": false
+        },
+        {
+          "Id": 94,
+          "Code": "5-ru",
+          "Text": "Ruština",
+          "IsUnknown": false,
+          "IsNotRelevant": false
+        },
+        {
+          "Id": 95,
+          "Code": "5-sk",
+          "Text": "Slovenština",
+          "IsUnknown": false,
+          "IsNotRelevant": false
+        },
+        {
+          "Id": 96,
+          "Code": "5-sl",
+          "Text": "Slovinština",
+          "IsUnknown": false,
+          "IsNotRelevant": false
+        },
+        {
+          "Id": 97,
+          "Code": "5-es",
+          "Text": "Španělština",
+          "IsUnknown": false,
+          "IsNotRelevant": false
+        },
+        {
+          "Id": 98,
+          "Code": "5-sv",
+          "Text": "Švédština",
+          "IsUnknown": false,
+          "IsNotRelevant": false
+        },
+        {
+          "Id": 99,
+          "Code": "5-bg",
+          "Text": "Bulharština",
+          "IsUnknown": false,
+          "IsNotRelevant": false
+        },
+        {
+          "Id": 100,
+          "Code": "5-ro",
+          "Text": "Rumunština",
+          "IsUnknown": false,
+          "IsNotRelevant": false
+        },
+        {
+          "Id": 101,
+          "Code": "5-ji",
+          "Text": "Jiný jazyk",
+          "IsUnknown": false,
+          "IsNotRelevant": false
+        },
+        {
+          "Id": 102,
+          "Code": "5-nu",
+          "Text": "Nelze určit",
+          "IsUnknown": false,
+          "IsNotRelevant": false
+        },
+        {
+          "Id": 1,
+          "Code": "1-CCBY40",
+          "Text": "Creative Commons - Uveďte původ 4.0",
+          "IsUnknown": false,
+          "IsNotRelevant": false
+        },
+        {
+          "Id": 2,
+          "Code": "1-CCBYNC40",
+          "Text": "Creative Commons - Uveďte původ-Neužívejte komerčně 4.0",
+          "IsUnknown": false,
+          "IsNotRelevant": false
+        },
+        {
+          "Id": 3,
+          "Code": "1-CCBYSA40",
+          "Text": "Creative Commons - Uveďte původ-Zachovejte licenci 4.0",
+          "IsUnknown": false,
+          "IsNotRelevant": false
+        },
+        {
+          "Id": 4,
+          "Code": "1-CCBYND40",
+          "Text": "Creative Commons - Uveďte původ-Nezpracovávejte 4.0",
+          "IsUnknown": false,
+          "IsNotRelevant": false
+        },
+        {
+          "Id": 5,
+          "Code": "1-CCBYNCSA40",
+          "Text": "Creative Commons - Uveďte původ-Neužívejte dílo komerčně-Zachovejte licenci 4.0",
+          "IsUnknown": false,
+          "IsNotRelevant": false
+        },
+        {
+          "Id": 6,
+          "Code": "1-CCBYNCND40",
+          "Text": "Creative Commons - Uveďte původ-Neužívejte komerčně-Nezpracovávejte 4.0",
+          "IsUnknown": false,
+          "IsNotRelevant": false
+        },
+        {
+          "Id": 7,
+          "Code": "1-CCBY30",
+          "Text": "Creative Commons - Uveďte původ 3.0 ČR",
+          "IsUnknown": false,
+          "IsNotRelevant": false
+        },
+        {
+          "Id": 8,
+          "Code": "1-CCBYNC30",
+          "Text": "Creative Commons - Uveďte původ-Neužívejte komerčně 3.0 ČR",
+          "IsUnknown": false,
+          "IsNotRelevant": false
+        },
+        {
+          "Id": 9,
+          "Code": "1-CCBYSA30",
+          "Text": "Creative Commons - Uveďte původ-Zachovejte licenci 3.0 ČR",
+          "IsUnknown": false,
+          "IsNotRelevant": false
+        },
+        {
+          "Id": 10,
+          "Code": "1-CCBYND30",
+          "Text": "Creative Commons - Uveďte původ-Nezpracovávejte 3.0 ČR",
+          "IsUnknown": false,
+          "IsNotRelevant": false
+        },
+        {
+          "Id": 11,
+          "Code": "1-CCBYNCSA30",
+          "Text": "Creative Commons - Uveďte původ-Neužívejte dílo komerčně-Zachovejte licenci 3.0 ČR",
+          "IsUnknown": false,
+          "IsNotRelevant": false
+        },
+        {
+          "Id": 12,
+          "Code": "1-CCBYNCND30",
+          "Text": "Creative Commons - Uveďte původ-Neužívejte komerčně-Nezpracovávejte 3.0 ČR",
+          "IsUnknown": false,
+          "IsNotRelevant": false
+        },
+        {
+          "Id": 13,
+          "Code": "1-GNUGPLv1",
+          "Text": "Všeobecná veřejná licence GNU (GNU-GPL) verze 1",
+          "IsUnknown": false,
+          "IsNotRelevant": false
+        },
+        {
+          "Id": 14,
+          "Code": "1-GNUGPLv2",
+          "Text": "Všeobecná veřejná licence GNU (GNU-GPL) verze 2",
+          "IsUnknown": false,
+          "IsNotRelevant": false
+        },
+        {
+          "Id": 15,
+          "Code": "1-GNUGPLv3",
+          "Text": "Všeobecná veřejná licence GNU (GNU-GPL) verze 3",
+          "IsUnknown": false,
+          "IsNotRelevant": false
+        },
+        {
+          "Id": 16,
+          "Code": "1-GNUFDLv1.3",
+          "Text": "Volná licence pro dokumenty FDL (GNU-FDL) verze 1.3",
+          "IsUnknown": false,
+          "IsNotRelevant": false
+        },
+        {
+          "Id": 17,
+          "Code": "1-PDO",
+          "Text": "Public Domain",
+          "IsUnknown": false,
+          "IsNotRelevant": false
+        },
+        {
+          "Id": 18,
+          "Code": "1-CPRT",
+          "Text": "Autorské dílo dle Autorského zákona (neboli Copyright)",
+          "IsUnknown": false,
+          "IsNotRelevant": false
+        },
+        {
+          "Id": 19,
+          "Code": "1-OST",
+          "Text": "Ostatní licence - vyplňte",
+          "IsUnknown": false,
+          "IsNotRelevant": false
+        },
+        {
+          "Id": 103,
+          "Code": "7-ANO",
+          "Text": "Volně dostupné bez registrace",
+          "IsUnknown": false,
+          "IsNotRelevant": false
+        },
+        {
+          "Id": 104,
+          "Code": "7-NER",
+          "Text": "Volně dostupné po registraci",
+          "IsUnknown": false,
+          "IsNotRelevant": false
+        },
+        {
+          "Id": 105,
+          "Code": "7-NEP",
+          "Text": "Dostupné po zaplacení",
+          "IsUnknown": false,
+          "IsNotRelevant": false
+        },
+        {
+          "Id": 106,
+          "Code": "7-ND",
+          "Text": "Není definováno",
+          "IsUnknown": false,
+          "IsNotRelevant": false
+        },
+        {
+          "Id": 107,
+          "Code": "7-NU",
+          "Text": "Nelze určit",
+          "IsUnknown": false,
+          "IsNotRelevant": false
+        },
+        {
+          "Id": 68,
+          "Code": "4-CT",
+          "Text": "čtenářská",
+          "IsUnknown": false,
+          "IsNotRelevant": false
+        },
+        {
+          "Id": 69,
+          "Code": "4-MA",
+          "Text": "matematická",
+          "IsUnknown": false,
+          "IsNotRelevant": false
+        },
+        {
+          "Id": 70,
+          "Code": "4-JA",
+          "Text": "jazyková",
+          "IsUnknown": false,
+          "IsNotRelevant": false
+        },
+        {
+          "Id": 71,
+          "Code": "4-PR",
+          "Text": "přírodovědná",
+          "IsUnknown": false,
+          "IsNotRelevant": false
+        },
+        {
+          "Id": 72,
+          "Code": "4-SO",
+          "Text": "sociální",
+          "IsUnknown": false,
+          "IsNotRelevant": false
+        },
+        {
+          "Id": 73,
+          "Code": "4-DI",
+          "Text": "digitální/informační",
+          "IsUnknown": false,
+          "IsNotRelevant": false
+        },
+        {
+          "Id": 74,
+          "Code": "4-FI",
+          "Text": "finanční",
+          "IsUnknown": false,
+          "IsNotRelevant": false
+        },
+        {
+          "Id": 75,
+          "Code": "4-NR",
+          "Text": "není relevantní",
+          "IsUnknown": false,
+          "IsNotRelevant": false
+        },
+        {
+          "Id": 76,
+          "Code": "4-NU",
+          "Text": "nelze určit",
+          "IsUnknown": false,
+          "IsNotRelevant": false
+        }
+      ]
+    }
+  }
+}
