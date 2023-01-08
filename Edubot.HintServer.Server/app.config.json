@@ -4,30 +4,16 @@
   },
   "Collections": {
     "DevEma": {
-      "SolrQueryUrlPattern": "http://edubot_hintserver_solr:8983/solr/ema/select?q=(nazev:({textUnquoted})^10 OR nazev_lemmatized:({textUnquoted})^8 OR nazev_lemmatized_ascii:({textUnquoted})^6 OR klicova_slova:({textUnquoted})^10 OR klicova_slova_lemmatized:({textUnquoted})^10 OR klicova_slova_lemmatized_ascii:({textUnquoted})^8 OR popis:({textUnquoted})^5 OR popis_lemmatized:({textUnquoted})^4 OR popis_lemmatized_ascii:({textUnquoted})^4 OR nazev_zdroje:({textUnquoted})^3 OR nazev_feedu:({textUnquoted})^3 OR url_search:({textUnquoted})^3 OR autor:({textUnquoted})^3)&defType=edismax&fl=*,score&start=0&boost=celkova_reputace&sort=score desc&rows=10&wt=json&{hintingparams}",
+      "SolrQueryUrlPattern": "http://edubot_hintserver_solr:8983/solr/ema/select?q=(nazev:({text|unquoted})^10 OR nazev_lemmatized:({text|unquoted})^8 OR nazev_lemmatized_ascii:({text|unquoted})^6 OR klicova_slova:({text|unquoted})^10 OR klicova_slova_lemmatized:({text|unquoted})^10 OR klicova_slova_lemmatized_ascii:({text|unquoted})^8 OR popis:({text|unquoted})^5 OR popis_lemmatized:({text|unquoted})^4 OR popis_lemmatized_ascii:({text|unquoted})^4 OR nazev_zdroje:({text|unquoted})^3 OR nazev_feedu:({text|unquoted})^3 OR url_search:({text|unquoted})^3 OR autor:({text|unquoted})^3){enum:stupen_vzdelavani|convertFromId|pre-AND}{enum:typ|convertFromId|pre-AND}{enum:obor_vzdelavani|convertFromId|pre-AND}{enum:jazyk|convertFromId|pre-AND}{enum:dostupnost|convertFromId|pre-AND}{enum:licence|convertFromId|pre-AND}&defType=edismax&fl=*,score&start=0&boost=celkova_reputace&sort=score desc&rows=10&wt=json&{hintingparams}",
       "IdField": "id",
-      "WizardHintFields": [
-        "stupen_vzdelavani",
-        "rocnik",
-        "typ",
-        "jazyk"
-      ],
-      "SearchHintFields": [
-        "stupen_vzdelavani",
-        "rocnik",
-        "typ",
-        "jazyk"
-      ],
-      "DropdownFields": [
-        "typ",
-        "jazyk",
-        "licence",
-        "dostupnost"
-      ],
+      "WizardHintFields": ["stupen_vzdelavani", "rocnik", "typ", "jazyk"],
+      "SearchHintFields": ["stupen_vzdelavani", "rocnik", "typ", "jazyk"],
+      "DropdownFields": ["typ", "jazyk", "licence", "dostupnost"],
       "EnumValues": [
         {
           "Id": 125,
           "Code": "2-P",
+          "Field": "stupen_vzdelavani",
           "Text": "předškolní vzdělávání",
           "IsUnknown": false,
           "IsNotRelevant": false
@@ -35,6 +21,7 @@
         {
           "Id": 126,
           "Code": "2-Z",
+          "Field": "stupen_vzdelavani",
           "Text": "základní vzdělávání",
           "IsUnknown": false,
           "IsNotRelevant": false
@@ -42,6 +29,7 @@
         {
           "Id": 127,
           "Code": "2-U",
+          "Field": "stupen_vzdelavani",
           "Text": "základní umělecké vzdělávání",
           "IsUnknown": false,
           "IsNotRelevant": false
@@ -49,6 +37,7 @@
         {
           "Id": 128,
           "Code": "2-S",
+          "Field": "stupen_vzdelavani",
           "Text": "speciální vzdělávání",
           "IsUnknown": false,
           "IsNotRelevant": false
@@ -56,6 +45,7 @@
         {
           "Id": 129,
           "Code": "2-G",
+          "Field": "stupen_vzdelavani",
           "Text": "gymnaziální vzdělávání",
           "IsUnknown": false,
           "IsNotRelevant": false
@@ -63,6 +53,7 @@
         {
           "Id": 130,
           "Code": "2-O",
+          "Field": "stupen_vzdelavani",
           "Text": "odborné vzdělávání",
           "IsUnknown": false,
           "IsNotRelevant": false
@@ -70,6 +61,7 @@
         {
           "Id": 131,
           "Code": "2-J",
+          "Field": "stupen_vzdelavani",
           "Text": "jazykové vzdělávání",
           "IsUnknown": false,
           "IsNotRelevant": false
@@ -77,6 +69,7 @@
         {
           "Id": 132,
           "Code": "2-N",
+          "Field": "stupen_vzdelavani",
           "Text": "neformální vzdělávání",
           "IsUnknown": false,
           "IsNotRelevant": false
@@ -84,6 +77,7 @@
         {
           "Id": 133,
           "Code": "2-T",
+          "Field": "stupen_vzdelavani",
           "Text": "terciální vzdělávání",
           "IsUnknown": false,
           "IsNotRelevant": false
@@ -91,6 +85,7 @@
         {
           "Id": 134,
           "Code": "2-NR",
+          "Field": "stupen_vzdelavani",
           "Text": "není relevantní",
           "IsUnknown": false,
           "IsNotRelevant": false
@@ -98,6 +93,7 @@
         {
           "Id": 135,
           "Code": "2-NU",
+          "Field": "stupen_vzdelavani",
           "Text": "nelze určit",
           "IsUnknown": false,
           "IsNotRelevant": false
@@ -105,6 +101,7 @@
         {
           "Id": 31,
           "Code": "3-MS",
+          "Field": "rocnik",
           "Text": "Mateřská škola",
           "IsUnknown": false,
           "IsNotRelevant": false
@@ -112,6 +109,7 @@
         {
           "Id": 32,
           "Code": "3-Z13",
+          "Field": "rocnik",
           "Text": "1. až 3. ročník ZŠ",
           "IsUnknown": false,
           "IsNotRelevant": false
@@ -119,6 +117,7 @@
         {
           "Id": 33,
           "Code": "3-Z45",
+          "Field": "rocnik",
           "Text": "4. až 5. ročník ZŠ",
           "IsUnknown": false,
           "IsNotRelevant": false
@@ -126,6 +125,7 @@
         {
           "Id": 34,
           "Code": "3-Z67",
+          "Field": "rocnik",
           "Text": "6. až 7. ročník ZŠ",
           "IsUnknown": false,
           "IsNotRelevant": false
@@ -133,6 +133,7 @@
         {
           "Id": 35,
           "Code": "3-Z89",
+          "Field": "rocnik",
           "Text": "8. až 9. ročník ZŠ",
           "IsUnknown": false,
           "IsNotRelevant": false
@@ -140,6 +141,7 @@
         {
           "Id": 36,
           "Code": "3-SS",
+          "Field": "rocnik",
           "Text": "Střední škola",
           "IsUnknown": false,
           "IsNotRelevant": false
@@ -147,6 +149,7 @@
         {
           "Id": 37,
           "Code": "3-VS",
+          "Field": "rocnik",
           "Text": "Vysoká škola",
           "IsUnknown": false,
           "IsNotRelevant": false
@@ -154,6 +157,7 @@
         {
           "Id": 38,
           "Code": "3-NR",
+          "Field": "rocnik",
           "Text": "Není relevantní",
           "IsUnknown": false,
           "IsNotRelevant": false
@@ -161,6 +165,7 @@
         {
           "Id": 39,
           "Code": "3-NU",
+          "Field": "rocnik",
           "Text": "Nelze určit",
           "IsUnknown": false,
           "IsNotRelevant": false
@@ -168,6 +173,7 @@
         {
           "Id": 40,
           "Code": "9-01",
+          "Field": "obor_vzdelavani",
           "Text": "Český jazyk a literatura",
           "IsUnknown": false,
           "IsNotRelevant": false
@@ -175,6 +181,7 @@
         {
           "Id": 41,
           "Code": "9-02",
+          "Field": "obor_vzdelavani",
           "Text": "Cizí jazyk",
           "IsUnknown": false,
           "IsNotRelevant": false
@@ -182,6 +189,7 @@
         {
           "Id": 42,
           "Code": "9-03",
+          "Field": "obor_vzdelavani",
           "Text": "Matematika a její aplikace",
           "IsUnknown": false,
           "IsNotRelevant": false
@@ -189,6 +197,7 @@
         {
           "Id": 43,
           "Code": "9-04",
+          "Field": "obor_vzdelavani",
           "Text": "Člověk a jeho svět",
           "IsUnknown": false,
           "IsNotRelevant": false
@@ -196,6 +205,7 @@
         {
           "Id": 44,
           "Code": "9-05",
+          "Field": "obor_vzdelavani",
           "Text": "Dějepis",
           "IsUnknown": false,
           "IsNotRelevant": false
@@ -203,6 +213,7 @@
         {
           "Id": 45,
           "Code": "9-06",
+          "Field": "obor_vzdelavani",
           "Text": "Výchova k občanství",
           "IsUnknown": false,
           "IsNotRelevant": false
@@ -210,6 +221,7 @@
         {
           "Id": 46,
           "Code": "9-07",
+          "Field": "obor_vzdelavani",
           "Text": "Fyzika",
           "IsUnknown": false,
           "IsNotRelevant": false
@@ -217,6 +229,7 @@
         {
           "Id": 47,
           "Code": "9-08",
+          "Field": "obor_vzdelavani",
           "Text": "Chemie",
           "IsUnknown": false,
           "IsNotRelevant": false
@@ -224,6 +237,7 @@
         {
           "Id": 48,
           "Code": "9-09",
+          "Field": "obor_vzdelavani",
           "Text": "Přírodopis a Biologie",
           "IsUnknown": false,
           "IsNotRelevant": false
@@ -231,6 +245,7 @@
         {
           "Id": 49,
           "Code": "9-10",
+          "Field": "obor_vzdelavani",
           "Text": "Zeměpis, Geografie a Geologie",
           "IsUnknown": false,
           "IsNotRelevant": false
@@ -238,6 +253,7 @@
         {
           "Id": 50,
           "Code": "9-11",
+          "Field": "obor_vzdelavani",
           "Text": "Hudební výchova",
           "IsUnknown": false,
           "IsNotRelevant": false
@@ -245,6 +261,7 @@
         {
           "Id": 51,
           "Code": "9-12",
+          "Field": "obor_vzdelavani",
           "Text": "Výtvarná výchova",
           "IsUnknown": false,
           "IsNotRelevant": false
@@ -252,6 +269,7 @@
         {
           "Id": 52,
           "Code": "9-13",
+          "Field": "obor_vzdelavani",
           "Text": "Tělesná výchova",
           "IsUnknown": false,
           "IsNotRelevant": false
@@ -259,6 +277,7 @@
         {
           "Id": 53,
           "Code": "9-14",
+          "Field": "obor_vzdelavani",
           "Text": "Výchova ke zdraví",
           "IsUnknown": false,
           "IsNotRelevant": false
@@ -266,6 +285,7 @@
         {
           "Id": 54,
           "Code": "9-15",
+          "Field": "obor_vzdelavani",
           "Text": "Člověk a svět práce",
           "IsUnknown": false,
           "IsNotRelevant": false
@@ -273,6 +293,7 @@
         {
           "Id": 55,
           "Code": "9-16",
+          "Field": "obor_vzdelavani",
           "Text": "Dramatická výchova",
           "IsUnknown": false,
           "IsNotRelevant": false
@@ -280,6 +301,7 @@
         {
           "Id": 56,
           "Code": "9-17",
+          "Field": "obor_vzdelavani",
           "Text": "Filmová/Audiovizuální výchova",
           "IsUnknown": false,
           "IsNotRelevant": false
@@ -287,6 +309,7 @@
         {
           "Id": 57,
           "Code": "9-18",
+          "Field": "obor_vzdelavani",
           "Text": "Literárně-dramatický obor",
           "IsUnknown": false,
           "IsNotRelevant": false
@@ -294,6 +317,7 @@
         {
           "Id": 58,
           "Code": "9-19",
+          "Field": "obor_vzdelavani",
           "Text": "Informatika a informační a komunikační technologie",
           "IsUnknown": false,
           "IsNotRelevant": false
@@ -301,6 +325,7 @@
         {
           "Id": 59,
           "Code": "9-20",
+          "Field": "obor_vzdelavani",
           "Text": "Etická výchova",
           "IsUnknown": false,
           "IsNotRelevant": false
@@ -308,6 +333,7 @@
         {
           "Id": 60,
           "Code": "9-21",
+          "Field": "obor_vzdelavani",
           "Text": "Odborné předměty",
           "IsUnknown": false,
           "IsNotRelevant": false
@@ -315,6 +341,7 @@
         {
           "Id": 61,
           "Code": "9-22",
+          "Field": "obor_vzdelavani",
           "Text": "Dítě a jeho tělo",
           "IsUnknown": false,
           "IsNotRelevant": false
@@ -322,6 +349,7 @@
         {
           "Id": 62,
           "Code": "9-23",
+          "Field": "obor_vzdelavani",
           "Text": "Dítě a jeho psychika",
           "IsUnknown": false,
           "IsNotRelevant": false
@@ -329,6 +357,7 @@
         {
           "Id": 63,
           "Code": "9-24",
+          "Field": "obor_vzdelavani",
           "Text": "Dítě a ten druhý",
           "IsUnknown": false,
           "IsNotRelevant": false
@@ -336,6 +365,7 @@
         {
           "Id": 64,
           "Code": "9-25",
+          "Field": "obor_vzdelavani",
           "Text": "Dítě a společnost",
           "IsUnknown": false,
           "IsNotRelevant": false
@@ -343,6 +373,7 @@
         {
           "Id": 65,
           "Code": "9-26",
+          "Field": "obor_vzdelavani",
           "Text": "Dítě a svět",
           "IsUnknown": false,
           "IsNotRelevant": false
@@ -350,6 +381,7 @@
         {
           "Id": 66,
           "Code": "9-27",
+          "Field": "obor_vzdelavani",
           "Text": "Není relevantní",
           "IsUnknown": false,
           "IsNotRelevant": false
@@ -357,6 +389,7 @@
         {
           "Id": 67,
           "Code": "9-28",
+          "Field": "obor_vzdelavani",
           "Text": "Nelze určit",
           "IsUnknown": false,
           "IsNotRelevant": false
@@ -364,6 +397,7 @@
         {
           "Id": 108,
           "Code": "8-MS",
+          "Field": "typ",
           "Text": "materiál ke stažení",
           "IsUnknown": false,
           "IsNotRelevant": false
@@ -371,6 +405,7 @@
         {
           "Id": 109,
           "Code": "8-IC",
+          "Field": "typ",
           "Text": "interaktivní cvičení",
           "IsUnknown": false,
           "IsNotRelevant": false
@@ -378,6 +413,7 @@
         {
           "Id": 110,
           "Code": "8-CL",
+          "Field": "typ",
           "Text": "článek",
           "IsUnknown": false,
           "IsNotRelevant": false
@@ -385,6 +421,7 @@
         {
           "Id": 111,
           "Code": "8-WS",
+          "Field": "typ",
           "Text": "webová stránka",
           "IsUnknown": false,
           "IsNotRelevant": false
@@ -392,6 +429,7 @@
         {
           "Id": 112,
           "Code": "8-AP",
+          "Field": "typ",
           "Text": "aplikace či software",
           "IsUnknown": false,
           "IsNotRelevant": false
@@ -399,6 +437,7 @@
         {
           "Id": 113,
           "Code": "8-VI",
+          "Field": "typ",
           "Text": "video",
           "IsUnknown": false,
           "IsNotRelevant": false
@@ -406,6 +445,7 @@
         {
           "Id": 114,
           "Code": "8-OB",
+          "Field": "typ",
           "Text": "obrázek",
           "IsUnknown": false,
           "IsNotRelevant": false
@@ -413,6 +453,7 @@
         {
           "Id": 115,
           "Code": "8-AU",
+          "Field": "typ",
           "Text": "audio",
           "IsUnknown": false,
           "IsNotRelevant": false
@@ -420,6 +461,7 @@
         {
           "Id": 116,
           "Code": "8-PL",
+          "Field": "typ",
           "Text": "pracovní list",
           "IsUnknown": false,
           "IsNotRelevant": false
@@ -427,6 +469,7 @@
         {
           "Id": 117,
           "Code": "8-DI",
+          "Field": "typ",
           "Text": "diskuze",
           "IsUnknown": false,
           "IsNotRelevant": false
@@ -434,6 +477,7 @@
         {
           "Id": 118,
           "Code": "8-KO",
+          "Field": "typ",
           "Text": "kolekce",
           "IsUnknown": false,
           "IsNotRelevant": false
@@ -441,6 +485,7 @@
         {
           "Id": 119,
           "Code": "8-PR",
+          "Field": "typ",
           "Text": "prezentace",
           "IsUnknown": false,
           "IsNotRelevant": false
@@ -448,6 +493,7 @@
         {
           "Id": 120,
           "Code": "8-OK",
+          "Field": "typ",
           "Text": "online kurz",
           "IsUnknown": false,
           "IsNotRelevant": false
@@ -455,6 +501,7 @@
         {
           "Id": 121,
           "Code": "8-PO",
+          "Field": "typ",
           "Text": "portál",
           "IsUnknown": false,
           "IsNotRelevant": false
@@ -462,6 +509,7 @@
         {
           "Id": 122,
           "Code": "8-TE",
+          "Field": "typ",
           "Text": "test",
           "IsUnknown": false,
           "IsNotRelevant": false
@@ -469,6 +517,7 @@
         {
           "Id": 123,
           "Code": "8-PU",
+          "Field": "typ",
           "Text": "publikace",
           "IsUnknown": false,
           "IsNotRelevant": false
@@ -476,6 +525,7 @@
         {
           "Id": 124,
           "Code": "8-VA",
+          "Field": "typ",
           "Text": "vzdělávací akce",
           "IsUnknown": false,
           "IsNotRelevant": false
@@ -483,6 +533,7 @@
         {
           "Id": 77,
           "Code": "5-cs",
+          "Field": "jazyk",
           "Text": "Čeština",
           "IsUnknown": false,
           "IsNotRelevant": false
@@ -490,6 +541,7 @@
         {
           "Id": 78,
           "Code": "5-la",
+          "Field": "jazyk",
           "Text": "Latina",
           "IsUnknown": false,
           "IsNotRelevant": false
@@ -497,6 +549,7 @@
         {
           "Id": 79,
           "Code": "5-en",
+          "Field": "jazyk",
           "Text": "Angličtina",
           "IsUnknown": false,
           "IsNotRelevant": false
@@ -504,6 +557,7 @@
         {
           "Id": 80,
           "Code": "5-da",
+          "Field": "jazyk",
           "Text": "Dánština",
           "IsUnknown": false,
           "IsNotRelevant": false
@@ -511,6 +565,7 @@
         {
           "Id": 81,
           "Code": "5-et",
+          "Field": "jazyk",
           "Text": "Estonština",
           "IsUnknown": false,
           "IsNotRelevant": false
@@ -518,6 +573,7 @@
         {
           "Id": 82,
           "Code": "5-fi",
+          "Field": "jazyk",
           "Text": "Finština",
           "IsUnknown": false,
           "IsNotRelevant": false
@@ -525,6 +581,7 @@
         {
           "Id": 83,
           "Code": "5-fr",
+          "Field": "jazyk",
           "Text": "Francouzština",
           "IsUnknown": false,
           "IsNotRelevant": false
@@ -532,6 +589,7 @@
         {
           "Id": 84,
           "Code": "5-it",
+          "Field": "jazyk",
           "Text": "Italština",
           "IsUnknown": false,
           "IsNotRelevant": false
@@ -539,6 +597,7 @@
         {
           "Id": 85,
           "Code": "5-lt",
+          "Field": "jazyk",
           "Text": "Litevština",
           "IsUnknown": false,
           "IsNotRelevant": false
@@ -546,6 +605,7 @@
         {
           "Id": 86,
           "Code": "5-lv",
+          "Field": "jazyk",
           "Text": "Lotyština",
           "IsUnknown": false,
           "IsNotRelevant": false
@@ -553,6 +613,7 @@
         {
           "Id": 87,
           "Code": "5-hu",
+          "Field": "jazyk",
           "Text": "Maďarština",
           "IsUnknown": false,
           "IsNotRelevant": false
@@ -560,6 +621,7 @@
         {
           "Id": 88,
           "Code": "5-mt",
+          "Field": "jazyk",
           "Text": "Maltština",
           "IsUnknown": false,
           "IsNotRelevant": false
@@ -567,6 +629,7 @@
         {
           "Id": 89,
           "Code": "5-de",
+          "Field": "jazyk",
           "Text": "Němčina",
           "IsUnknown": false,
           "IsNotRelevant": false
@@ -574,6 +637,7 @@
         {
           "Id": 90,
           "Code": "5-nl",
+          "Field": "jazyk",
           "Text": "Holandština",
           "IsUnknown": false,
           "IsNotRelevant": false
@@ -581,6 +645,7 @@
         {
           "Id": 91,
           "Code": "5-pl",
+          "Field": "jazyk",
           "Text": "Polština",
           "IsUnknown": false,
           "IsNotRelevant": false
@@ -588,6 +653,7 @@
         {
           "Id": 92,
           "Code": "5-pt",
+          "Field": "jazyk",
           "Text": "Portugalština",
           "IsUnknown": false,
           "IsNotRelevant": false
@@ -595,6 +661,7 @@
         {
           "Id": 93,
           "Code": "5-el",
+          "Field": "jazyk",
           "Text": "Řečtina",
           "IsUnknown": false,
           "IsNotRelevant": false
@@ -602,6 +669,7 @@
         {
           "Id": 94,
           "Code": "5-ru",
+          "Field": "jazyk",
           "Text": "Ruština",
           "IsUnknown": false,
           "IsNotRelevant": false
@@ -609,6 +677,7 @@
         {
           "Id": 95,
           "Code": "5-sk",
+          "Field": "jazyk",
           "Text": "Slovenština",
           "IsUnknown": false,
           "IsNotRelevant": false
@@ -616,6 +685,7 @@
         {
           "Id": 96,
           "Code": "5-sl",
+          "Field": "jazyk",
           "Text": "Slovinština",
           "IsUnknown": false,
           "IsNotRelevant": false
@@ -623,6 +693,7 @@
         {
           "Id": 97,
           "Code": "5-es",
+          "Field": "jazyk",
           "Text": "Španělština",
           "IsUnknown": false,
           "IsNotRelevant": false
@@ -630,6 +701,7 @@
         {
           "Id": 98,
           "Code": "5-sv",
+          "Field": "jazyk",
           "Text": "Švédština",
           "IsUnknown": false,
           "IsNotRelevant": false
@@ -637,6 +709,7 @@
         {
           "Id": 99,
           "Code": "5-bg",
+          "Field": "jazyk",
           "Text": "Bulharština",
           "IsUnknown": false,
           "IsNotRelevant": false
@@ -644,6 +717,7 @@
         {
           "Id": 100,
           "Code": "5-ro",
+          "Field": "jazyk",
           "Text": "Rumunština",
           "IsUnknown": false,
           "IsNotRelevant": false
@@ -651,6 +725,7 @@
         {
           "Id": 101,
           "Code": "5-ji",
+          "Field": "jazyk",
           "Text": "Jiný jazyk",
           "IsUnknown": false,
           "IsNotRelevant": false
@@ -658,6 +733,7 @@
         {
           "Id": 102,
           "Code": "5-nu",
+          "Field": "jazyk",
           "Text": "Nelze určit",
           "IsUnknown": false,
           "IsNotRelevant": false
@@ -665,6 +741,7 @@
         {
           "Id": 1,
           "Code": "1-CCBY40",
+          "Field": "licence",
           "Text": "Creative Commons - Uveďte původ 4.0",
           "IsUnknown": false,
           "IsNotRelevant": false
@@ -672,6 +749,7 @@
         {
           "Id": 2,
           "Code": "1-CCBYNC40",
+          "Field": "licence",
           "Text": "Creative Commons - Uveďte původ-Neužívejte komerčně 4.0",
           "IsUnknown": false,
           "IsNotRelevant": false
@@ -679,6 +757,7 @@
         {
           "Id": 3,
           "Code": "1-CCBYSA40",
+          "Field": "licence",
           "Text": "Creative Commons - Uveďte původ-Zachovejte licenci 4.0",
           "IsUnknown": false,
           "IsNotRelevant": false
@@ -686,6 +765,7 @@
         {
           "Id": 4,
           "Code": "1-CCBYND40",
+          "Field": "licence",
           "Text": "Creative Commons - Uveďte původ-Nezpracovávejte 4.0",
           "IsUnknown": false,
           "IsNotRelevant": false
@@ -693,6 +773,7 @@
         {
           "Id": 5,
           "Code": "1-CCBYNCSA40",
+          "Field": "licence",
           "Text": "Creative Commons - Uveďte původ-Neužívejte dílo komerčně-Zachovejte licenci 4.0",
           "IsUnknown": false,
           "IsNotRelevant": false
@@ -700,6 +781,7 @@
         {
           "Id": 6,
           "Code": "1-CCBYNCND40",
+          "Field": "licence",
           "Text": "Creative Commons - Uveďte původ-Neužívejte komerčně-Nezpracovávejte 4.0",
           "IsUnknown": false,
           "IsNotRelevant": false
@@ -707,6 +789,7 @@
         {
           "Id": 7,
           "Code": "1-CCBY30",
+          "Field": "licence",
           "Text": "Creative Commons - Uveďte původ 3.0 ČR",
           "IsUnknown": false,
           "IsNotRelevant": false
@@ -714,6 +797,7 @@
         {
           "Id": 8,
           "Code": "1-CCBYNC30",
+          "Field": "licence",
           "Text": "Creative Commons - Uveďte původ-Neužívejte komerčně 3.0 ČR",
           "IsUnknown": false,
           "IsNotRelevant": false
@@ -721,6 +805,7 @@
         {
           "Id": 9,
           "Code": "1-CCBYSA30",
+          "Field": "licence",
           "Text": "Creative Commons - Uveďte původ-Zachovejte licenci 3.0 ČR",
           "IsUnknown": false,
           "IsNotRelevant": false
@@ -728,6 +813,7 @@
         {
           "Id": 10,
           "Code": "1-CCBYND30",
+          "Field": "licence",
           "Text": "Creative Commons - Uveďte původ-Nezpracovávejte 3.0 ČR",
           "IsUnknown": false,
           "IsNotRelevant": false
@@ -735,6 +821,7 @@
         {
           "Id": 11,
           "Code": "1-CCBYNCSA30",
+          "Field": "licence",
           "Text": "Creative Commons - Uveďte původ-Neužívejte dílo komerčně-Zachovejte licenci 3.0 ČR",
           "IsUnknown": false,
           "IsNotRelevant": false
@@ -742,6 +829,7 @@
         {
           "Id": 12,
           "Code": "1-CCBYNCND30",
+          "Field": "licence",
           "Text": "Creative Commons - Uveďte původ-Neužívejte komerčně-Nezpracovávejte 3.0 ČR",
           "IsUnknown": false,
           "IsNotRelevant": false
@@ -749,6 +837,7 @@
         {
           "Id": 13,
           "Code": "1-GNUGPLv1",
+          "Field": "licence",
           "Text": "Všeobecná veřejná licence GNU (GNU-GPL) verze 1",
           "IsUnknown": false,
           "IsNotRelevant": false
@@ -756,6 +845,7 @@
         {
           "Id": 14,
           "Code": "1-GNUGPLv2",
+          "Field": "licence",
           "Text": "Všeobecná veřejná licence GNU (GNU-GPL) verze 2",
           "IsUnknown": false,
           "IsNotRelevant": false
@@ -763,6 +853,7 @@
         {
           "Id": 15,
           "Code": "1-GNUGPLv3",
+          "Field": "licence",
           "Text": "Všeobecná veřejná licence GNU (GNU-GPL) verze 3",
           "IsUnknown": false,
           "IsNotRelevant": false
@@ -770,6 +861,7 @@
         {
           "Id": 16,
           "Code": "1-GNUFDLv1.3",
+          "Field": "licence",
           "Text": "Volná licence pro dokumenty FDL (GNU-FDL) verze 1.3",
           "IsUnknown": false,
           "IsNotRelevant": false
@@ -777,6 +869,7 @@
         {
           "Id": 17,
           "Code": "1-PDO",
+          "Field": "licence",
           "Text": "Public Domain",
           "IsUnknown": false,
           "IsNotRelevant": false
@@ -784,6 +877,7 @@
         {
           "Id": 18,
           "Code": "1-CPRT",
+          "Field": "licence",
           "Text": "Autorské dílo dle Autorského zákona (neboli Copyright)",
           "IsUnknown": false,
           "IsNotRelevant": false
@@ -791,6 +885,7 @@
         {
           "Id": 19,
           "Code": "1-OST",
+          "Field": "licence",
           "Text": "Ostatní licence - vyplňte",
           "IsUnknown": false,
           "IsNotRelevant": false
@@ -798,6 +893,7 @@
         {
           "Id": 103,
           "Code": "7-ANO",
+          "Field": "dostupnost",
           "Text": "Volně dostupné bez registrace",
           "IsUnknown": false,
           "IsNotRelevant": false
@@ -805,6 +901,7 @@
         {
           "Id": 104,
           "Code": "7-NER",
+          "Field": "dostupnost",
           "Text": "Volně dostupné po registraci",
           "IsUnknown": false,
           "IsNotRelevant": false
@@ -812,6 +909,7 @@
         {
           "Id": 105,
           "Code": "7-NEP",
+          "Field": "dostupnost",
           "Text": "Dostupné po zaplacení",
           "IsUnknown": false,
           "IsNotRelevant": false
@@ -819,6 +917,7 @@
         {
           "Id": 106,
           "Code": "7-ND",
+          "Field": "dostupnost",
           "Text": "Není definováno",
           "IsUnknown": false,
           "IsNotRelevant": false
@@ -826,6 +925,7 @@
         {
           "Id": 107,
           "Code": "7-NU",
+          "Field": "dostupnost",
           "Text": "Nelze určit",
           "IsUnknown": false,
           "IsNotRelevant": false
@@ -833,6 +933,7 @@
         {
           "Id": 68,
           "Code": "4-CT",
+          "Field": "gramotnost",
           "Text": "čtenářská",
           "IsUnknown": false,
           "IsNotRelevant": false
@@ -840,6 +941,7 @@
         {
           "Id": 69,
           "Code": "4-MA",
+          "Field": "gramotnost",
           "Text": "matematická",
           "IsUnknown": false,
           "IsNotRelevant": false
@@ -847,6 +949,7 @@
         {
           "Id": 70,
           "Code": "4-JA",
+          "Field": "gramotnost",
           "Text": "jazyková",
           "IsUnknown": false,
           "IsNotRelevant": false
@@ -854,6 +957,7 @@
         {
           "Id": 71,
           "Code": "4-PR",
+          "Field": "gramotnost",
           "Text": "přírodovědná",
           "IsUnknown": false,
           "IsNotRelevant": false
@@ -861,6 +965,7 @@
         {
           "Id": 72,
           "Code": "4-SO",
+          "Field": "gramotnost",
           "Text": "sociální",
           "IsUnknown": false,
           "IsNotRelevant": false
@@ -868,6 +973,7 @@
         {
           "Id": 73,
           "Code": "4-DI",
+          "Field": "gramotnost",
           "Text": "digitální/informační",
           "IsUnknown": false,
           "IsNotRelevant": false
@@ -875,6 +981,7 @@
         {
           "Id": 74,
           "Code": "4-FI",
+          "Field": "gramotnost",
           "Text": "finanční",
           "IsUnknown": false,
           "IsNotRelevant": false
@@ -882,6 +989,7 @@
         {
           "Id": 75,
           "Code": "4-NR",
+          "Field": "gramotnost",
           "Text": "není relevantní",
           "IsUnknown": false,
           "IsNotRelevant": false
@@ -889,6 +997,7 @@
         {
           "Id": 76,
           "Code": "4-NU",
+          "Field": "gramotnost",
           "Text": "nelze určit",
           "IsUnknown": false,
           "IsNotRelevant": false

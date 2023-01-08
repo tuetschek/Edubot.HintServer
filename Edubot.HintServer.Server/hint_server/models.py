@@ -87,7 +87,7 @@ class SearchResponse(ApiModel):
         self.enumValues = getArrayFromDict(
             obj, "enumValues", lambda x: EnumList(x))
         self.items = getArrayFromDict(
-            obj, "enumValues", lambda x: ResultItem(x))
+            obj, "items", lambda x: ResultItem(x))
         self.searchHints = getArrayFromDict(
             obj, "searchHints", lambda x: list(map(lambda y: EnumItem(y), x)))
         self.wizardHints = getObjectFromDict(
@@ -96,8 +96,8 @@ class SearchResponse(ApiModel):
             obj, "dropdownValues", lambda x: EnumCountList(x))
         self.redirectedFromReducedQuery = getObjectFromDict(
             obj, "redirectedFromReducedQuery", str)
-        self.redirectedFormEnumValues = getArrayFromDict(
-            obj, "redirectedFormEnumValues", lambda x: EnumList(x))
+        self.redirectedFromEnumValues = getArrayFromDict(
+            obj, "redirectedFromEnumValues", lambda x: EnumList(x))
 
 
 class EnumItem(ApiModel):
@@ -181,7 +181,7 @@ class HintRequest(ApiModel):
 
     def _addValuesFromDict(self, obj: dict[str, Any]):
         self.textValue = getObjectFromDict(obj, "textValue", str)
-        self.enumValues = getObjectFromDict(obj, "enumValues", dict)
+        self.enumValues : Optional[dict[str,list[str]]] = getObjectFromDict(obj, "enumValues", dict)
         self.notRelevantValues = {key: True for key in listOrEmpty(
             getArrayFromDict(obj, "notRelevantValues", lambda x: str(x)))}
 
@@ -227,8 +227,12 @@ class RedirectRequest(ApiModel):
         self._addValuesFromDict(obj)
 
     def _addValuesFromDict(self, obj: dict[str, Any]):
-        # TODO
-        pass
+        self.detectEnums = getNumberFromDict(obj, "detectEnums", bool)
+        self.doRedirection = getNumberFromDict(obj, "doRedirection", bool)
+        self.textValue = getObjectFromDict(obj, "textValue", str)
+        self.enumValues : Optional[dict[str, list[str]]] = getObjectFromDict(obj, "enumValues", dict)
+        self.notRelevantValues : Optional[dict[str, bool]]  = {key: True for key in listOrEmpty(
+            getArrayFromDict(obj, "notRelevantValues", lambda x: str(x)))}
 
 
 class RedirectResponse(ApiModel):
@@ -238,8 +242,14 @@ class RedirectResponse(ApiModel):
         self._addValuesFromDict(obj)
 
     def _addValuesFromDict(self, obj: dict[str, Any]):
-        # TODO
-        pass
+        self.anyDetection = getNumberFromDict(obj, "anyDetection", bool)
+        self.anyRedirection = getNumberFromDict(obj, "anyRedirection", bool)
+        self.detectedTextValue = getObjectFromDict(obj, "detectedTextValue", str)
+        self.detectedEnumValues : Optional[dict[str, list[str]]] = getObjectFromDict(obj, "detectedEnumValues", dict)
+        self.detectedNotRelevantValues = getArrayFromDict(obj, "redirectedNotRelevantValues", lambda x: str(x))
+        self.redirectedTextValue = getObjectFromDict(obj, "redirectedTextValue", str)
+        self.redirectedEnumValues : Optional[dict[str, list[str]]] = getObjectFromDict(obj, "redirectedEnumValues", dict)
+        self.redirectedNotRelevantValues = getArrayFromDict(obj, "redirectedNotRelevantValues", lambda x: str(x))
 
 
 class AppConfiguration:
@@ -281,6 +291,8 @@ class CollectionConfiguration:
         self.enumValues = getArrayFromDict(
             obj, "EnumValues", lambda x: CollectionConfigurationEnumValue(x))
         self.precomputedSolrUrlParams: Optional[str] = None
+        self.precomputedValueCodeToValueText: Optional[dict[str, str]] = None
+        self.precomputedValueFieldAndTextToValue: Optional[dict[(str, str), CollectionConfigurationEnumValue]] = None
 
 
 class CollectionConfigurationEnumValue:
@@ -292,6 +304,7 @@ class CollectionConfigurationEnumValue:
         self.id = getNumberFromDict(obj, "Id", int)
         self.code = getObjectFromDict(obj, "Code", str)
         self.text = getObjectFromDict(obj, "Text", str)
+        self.field = getObjectFromDict(obj, "Field", str)
         self.isUnknown = getNumberFromDict(obj, "IsUnknown", bool)
         self.isNotRelevant = getNumberFromDict(obj, "IsNotRelevant", bool)
 

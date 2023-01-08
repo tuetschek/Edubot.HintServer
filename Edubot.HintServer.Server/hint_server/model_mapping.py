@@ -21,7 +21,7 @@ def downgradeSearchHint2EnumItem(searchHint: models.SearchHint, collectionConfig
         downgraded.append(item)
     return downgraded
     
-def downgradeWizardHint2EnumList(wizardHint: models.WizardHint, collectionConfig: models.CollectionConfiguration):
+def downgradeWizardHint2EnumList(wizardHint: models.WizardHint, collectionConfig: models.CollectionConfiguration) -> models.EnumList:
     downgraded = models.EnumList()
     downgraded.enumType = wizardHint.field
     downgraded.values = []
@@ -34,4 +34,3 @@ def downgradeWizardHint2EnumList(wizardHint: models.WizardHint, collectionConfig
             item.valueCode = configFieldValue.code
             downgraded.values.append(item) 
     return downgraded
-    

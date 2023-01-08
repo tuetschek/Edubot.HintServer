@@ -2,10 +2,11 @@ FROM python:3.9-alpine
 
 ENV PYTHONIOENCODING=utf-8
 
+COPY requirements.txt requirements.txt
+RUN pip install -r requirements.txt
+
 RUN mkdir /app
 WORKDIR /app
 COPY . .
-
-RUN pip install -r requirements.txt
 
 ENTRYPOINT ["python", "app.py"]
