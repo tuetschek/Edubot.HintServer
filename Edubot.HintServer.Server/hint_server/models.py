@@ -282,6 +282,7 @@ class CollectionConfiguration:
         self.solrQueryUrlPattern = getObjectFromDict(
             obj, "SolrQueryUrlPattern", str)
         self.idField = getObjectFromDict(obj, "IdField", str)
+        self.searchField = getObjectFromDict(obj, "SearchField", str)
         self.wizardHintFields = getArrayFromDict(
             obj, "WizardHintFields", lambda x: x)
         self.searchHintFields = getArrayFromDict(

@@ -44,6 +44,7 @@ def readAndValidateConfig(path: str):
 
         if isNone(collectionObj.solrQueryUrlPattern, collectionPath + "/SolrQueryUrlPattern"): return
         if isNone(collectionObj.idField, collectionPath + "/IdField"): return
+        if isNone(collectionObj.searchField, collectionPath + "/SearchField"): return
         if isNone(collectionObj.wizardHintFields, collectionPath + "/WizardHintFields"): return
         if isNone(collectionObj.searchHintFields, collectionPath + "/SearchHintFields"): return
         if isNone(collectionObj.dropdownFields, collectionPath + "/DropdownFields"): return        

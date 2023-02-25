@@ -171,7 +171,7 @@ def getOrCreateValueCodeToTextMapping(collectionConfig: models.CollectionConfigu
     if collectionConfig.precomputedValueCodeToValueText is not None:
         return collectionConfig.precomputedValueCodeToValueText
 
-    mapping = {asNotNone(ev.code): asNotNone(ev.text)
+    mapping = {asNotNone(ev.code): asNotNone(getattr(ev, collectionConfig.searchField))
                for ev in collectionConfig.enumValues}
     collectionConfig.precomputedValueCodeToValueText = mapping
 
