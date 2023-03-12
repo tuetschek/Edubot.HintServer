@@ -50,6 +50,8 @@ def readAndValidateConfig(path: str):
         if isNone(collectionObj.dropdownFields, collectionPath + "/DropdownFields"): return        
         if isNone(collectionObj.enumValues, enumValuePath): return
 
+        assert collectionObj.searchField in ["id", "code", "text"]
+
         assert collectionObj.enumValues is not None
         for enumValueObj in collectionObj.enumValues:
             if isNone(enumValueObj.id, "Id"): return
