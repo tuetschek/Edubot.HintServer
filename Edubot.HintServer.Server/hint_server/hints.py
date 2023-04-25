@@ -26,8 +26,9 @@ def generateSearchHints(enumValues: Optional[dict[str, list[str]]], notRelevantF
         fieldObj = facetObj[field]
 
         for fieldValue in fieldObj:
-            score = fieldObj[fieldValue]["count"]
-            candidates.append((field, fieldValue, score))
+            count = int(fieldObj[fieldValue]["count"])
+            score = (count ** 2) + ((totalFound - count) ** 2)
+            candidates.append((field, fieldValue, -score))
 
     candidates = sorted(
         candidates, key=lambda item: item[2], reverse=True)[0:5]
