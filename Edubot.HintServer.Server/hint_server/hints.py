@@ -1,11 +1,18 @@
-from typing import Any
+from typing import Any, Optional
 
 from hint_server.models import NotRelevantFields, SolrResponse, CollectionConfiguration, SearchHint, WizardHint
 
 
-def generateSearchHints(notRelevantFields: NotRelevantFields, solrResponse: SolrResponse, collectionConfig: CollectionConfiguration) -> list[SearchHint]:
+def generateSearchHints(enumValues: Optional[dict[str, list[str]]], notRelevantFields: NotRelevantFields, solrResponse: SolrResponse, collectionConfig: CollectionConfiguration) -> list[SearchHint]:
     # TODO: IsUnknown, IsNotRelevant
     idField = collectionConfig.idField
+
+    specifiedFields = {}
+    for field in notRelevantFields:
+        specifiedFields[field] = True
+    for field in (enumValues if enumValues is not None else {}):
+        if len(enumValues[field]) > 0:
+            specifiedFields[field] = True
 
     totalFound = int(solrResponse["response"]["numFound"])
     facetObj = solrResponse["stats"]["stats_fields"][idField]["facets"]
@@ -13,7 +20,7 @@ def generateSearchHints(notRelevantFields: NotRelevantFields, solrResponse: Solr
     candidates = []
 
     for field in facetObj:
-        if field in notRelevantFields:
+        if field in specifiedFields:
             continue
 
         fieldObj = facetObj[field]
@@ -28,9 +35,16 @@ def generateSearchHints(notRelevantFields: NotRelevantFields, solrResponse: Solr
     return list(map(lambda c: SearchHint(fieldsAndValues={c[0]: c[1]}), candidates))
 
 
-def generateWizardHints(notRelevantFields: dict[str, bool], solrResponse: dict[str, Any], collectionConfig: CollectionConfiguration) -> list[WizardHint]:
+def generateWizardHints(enumValues: Optional[dict[str, list[str]]], notRelevantFields: NotRelevantFields, solrResponse: SolrResponse, collectionConfig: CollectionConfiguration) -> list[WizardHint]:
     # TODO: IsUnknown, IsNotRelevant
     idField = collectionConfig.idField
+
+    specifiedFields = {}
+    for field in notRelevantFields:
+        specifiedFields[field] = True
+    for field in (enumValues if enumValues is not None else {}):
+        if len(enumValues[field]) > 0:
+            specifiedFields[field] = True
 
     totalFound = int(solrResponse["response"]["numFound"])
     facetObj = solrResponse["stats"]["stats_fields"][idField]["facets"]
@@ -38,7 +52,7 @@ def generateWizardHints(notRelevantFields: dict[str, bool], solrResponse: dict[s
     candidates = []
 
     for field in facetObj:
-        if field in notRelevantFields:
+        if field in specifiedFields:
             continue
 
         fieldObj = facetObj[field]

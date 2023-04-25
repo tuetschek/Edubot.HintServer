@@ -112,9 +112,9 @@ def hint(request: models.HintRequest, config: models.AppConfiguration) -> models
     # Generate response with additional data
     hintResponse = models.HintResponse()
     hintResponse.searchHints = generateSearchHints(
-        notRelevantFields, solrResponse, collectionConfig)
+        enumValues, notRelevantFields, solrResponse, collectionConfig)
     hintResponse.wizardHints = generateWizardHints(
-        notRelevantFields, solrResponse, collectionConfig)
+        enumValues, notRelevantFields, solrResponse, collectionConfig)
 
     return hintResponse
 
