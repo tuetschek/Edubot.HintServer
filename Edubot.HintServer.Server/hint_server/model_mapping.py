@@ -1,5 +1,6 @@
 from typing import TypeVar, Optional
 
+import logging
 import hint_server.models as models
 
 T = TypeVar("T")
@@ -11,7 +12,7 @@ def asNotNone(value: Optional[T]) -> T:
 def downgradeSearchHint2EnumItem(searchHint: models.SearchHint, collectionConfig: models.CollectionConfiguration) -> list[models.EnumItem]:
     downgraded = []
     for field, fieldValue in asNotNone(searchHint.fieldsAndValues).items():
-        print(field, fieldValue)
+        logging.debug(" ".join((field, fieldValue)))
         configEnumValue = list(filter(lambda x: x.text == fieldValue, asNotNone(collectionConfig.enumValues)))
         if len(configEnumValue) == 0: continue
         item = models.EnumItem()
@@ -20,7 +21,7 @@ def downgradeSearchHint2EnumItem(searchHint: models.SearchHint, collectionConfig
         item.enumType = field
         downgraded.append(item)
     return downgraded
-    
+
 def downgradeWizardHint2EnumList(wizardHint: models.WizardHint, collectionConfig: models.CollectionConfiguration) -> models.EnumList:
     downgraded = models.EnumList()
     downgraded.enumType = wizardHint.field
@@ -32,5 +33,5 @@ def downgradeWizardHint2EnumList(wizardHint: models.WizardHint, collectionConfig
             item = models.EnumListItem()
             item.id = configFieldValue.id
             item.valueCode = configFieldValue.code
-            downgraded.values.append(item) 
+            downgraded.values.append(item)
     return downgraded

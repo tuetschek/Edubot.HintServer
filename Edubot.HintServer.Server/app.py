@@ -3,6 +3,8 @@ import traceback
 import hint_server.models as models
 import hint_server.logic as logic
 import hint_server.config as config
+import argparse
+import logging
 
 app = Flask(__name__)
 app.json_encoder = models.ApiModelJSONEncoder
@@ -13,7 +15,7 @@ def errorPage(error: str, code: int):
 @app.errorhandler(500)
 def error500(error):
     return errorPage(error, 500)
-    
+
 @app.errorhandler(404)
 def error404(error):
     return errorPage(error, 404)
@@ -67,9 +69,15 @@ def catch_all(path):
 
 if __name__ == '__main__':
     config.readAndValidateConfig("app.config.json")
-    
+    ap = argparse.ArgumentParser()
+    ap.add_argument('--port', default=8000, type=int, help='Port to run on')
+    ap.add_argument('--debug', action='store_true', help='Enable flask debug mode')
+    args = ap.parse_args()
+
+    logging.basicConfig(format='%(asctime)s:%(levelname)s - %(message)s', level=logging.DEBUG if args.debug else logging.INFO)
+
     if False: # TEMP
         from waitress import serve
         serve(app, host="0.0.0.0", port=8000)
     else:
-        app.run(host="0.0.0.0", port=8000)
+        app.run(host="0.0.0.0", port=args.port, debug=args.debug)
