@@ -1,5 +1,6 @@
 import json
 import re
+import logging
 from urllib.request import urlopen
 from urllib.parse import quote
 from typing import TypeVar, Optional
@@ -9,6 +10,7 @@ from hint_server.model_mapping import downgradeSearchHint2EnumItem, downgradeWiz
 from hint_server.hints import generateSearchHints, generateWizardHints
 
 T = TypeVar("T")
+
 
 
 def asNotNone(value: Optional[T]) -> T:
@@ -66,7 +68,7 @@ def search(request: models.SearchRequest, config: models.AppConfiguration) -> mo
     # Generate hints
     if request.returnSearchHints == True:
         candidates = generateSearchHints(
-            notRelevantFields, solrResponse, collectionConfig)
+            enumValues, notRelevantFields, solrResponse, collectionConfig)
         response.searchHints = [downgradeSearchHint2EnumItem(
             x, collectionConfig) for x in candidates]
     else:
@@ -74,7 +76,7 @@ def search(request: models.SearchRequest, config: models.AppConfiguration) -> mo
 
     if request.returnWizardHints == True:
         candidates = generateWizardHints(
-            notRelevantFields, solrResponse, collectionConfig)
+            enumValues, notRelevantFields, solrResponse, collectionConfig)
         if len(candidates) > 0:
             response.wizardHints = downgradeWizardHint2EnumList(
                 candidates[0], collectionConfig)
@@ -85,7 +87,7 @@ def search(request: models.SearchRequest, config: models.AppConfiguration) -> mo
     response.startIndex = 0
     response.itemCount = 0
     response.items: list[models.ResultItem] = []
-    response.totalCount = 0 
+    response.totalCount = 0
     response.dropdownValues: list[models.EnumCountList] = []
 
     return response
