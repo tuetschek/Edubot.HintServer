@@ -281,6 +281,7 @@ class CollectionConfiguration:
     def _addValuesFromDict(self, obj: dict[str, Any]):
         self.solrQueryUrlPattern = getObjectFromDict(
             obj, "SolrQueryUrlPattern", str)
+        self.lemmatizeUrlPattern = getObjectFromDict(obj, "LemmatizeUrlPattern", str)
         self.idField = getObjectFromDict(obj, "IdField", str)
         self.searchField = getObjectFromDict(obj, "SearchField", str)
         self.wizardHintFields = getArrayFromDict(
