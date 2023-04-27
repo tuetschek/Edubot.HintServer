@@ -59,7 +59,8 @@ def search(request: models.SearchRequest, config: models.AppConfiguration) -> mo
         item.enumType): True for item in request.enumValues if item.isNotRelevant}
 
     # Generate URL for Solr
-    url = formatUrl(collectionConfig.solrQueryUrlPattern, request.query, hintingparams, enumValues, notRelevantFields)
+    url = formatUrl(collectionConfig.solrQueryUrlPattern, collectionConfig.lemmatizeUrlPattern,
+                    request.query, hintingparams, enumValues, notRelevantFields)
 
     # Call Solr
     connection = urlopen(url)
@@ -236,14 +237,29 @@ def combineRedirectResponseAndOldSearchRequestToRedirectedSearchRequest(oldSearc
 
     return req
 
-def formatUrl(urlPattern: Optional[str], text: Optional[str], hintingParams: Optional[str], enumValues: Optional[dict[str,list[str]]], notRelevantFields: Optional[dict[str,bool]]) -> str:
+
+def lemmatize(urlPattern: str, text: str):
+    """Lemmatize using Morphodita API"""
+    url = urlPattern.replace("{text}", text)
+    connection = urlopen(url)
+    response = json.load(connection)
+    return ' '.join([tok['lemma'] for sent in response['result'] for tok in sent])
+
+
+def formatUrl(urlPattern: Optional[str], lemmatizeUrlPattern: Optional[str],
+              text: Optional[str], hintingParams: Optional[str], enumValues: Optional[dict[str,list[str]]],
+              notRelevantFields: Optional[dict[str,bool]]) -> str:
+
     urlPattern, text, hintingParams, enumValues, notRelevantFields = defaultIfNone(urlPattern,""), defaultIfNone(text, ""), defaultIfNone(hintingParams, ""), defaultIfNone(enumValues, {}), defaultIfNone(notRelevantFields, {})
 
     patternRegex = re.compile(r"^[^\}]*(\{[^\}]*\}).*$")
-    
+
+    # prepare lemmatized text if lemmatizer URL is non-empty
+    lemmatized_text = lemmatize(lemmatizeUrlPattern, text) if lemmatizeUrlPattern else text
+
     # Start with non-replaced pattern
     url = urlPattern
-    
+
     while True:
         # Get another match
         patternMatch = patternRegex.match(url)
@@ -256,6 +272,10 @@ def formatUrl(urlPattern: Optional[str], text: Optional[str], hintingParams: Opt
             url = url.replace(patternMatch, quote(text))
         elif patternMatch == "{text|quoted}":
             url = url.replace(patternMatch, quote(f"\"{text}\""))
+        elif patternMatch == "{text|lemmatized,unquoted}":
+            url = url.replace(patternMatch, quote(lemmatized_text))
+        elif patternMatch == "{text|lemmatized,quoted}":
+            url = url.replace(patternMatch, quote(f"\"{lemmatized_text}\""))
         elif patternMatch.startswith("{enum:"):
             args = patternMatch[len("{enum:"):-1].split("|")
             if len(args) != 3 or args[1] != "convertFromId" or args[2] != "pre-AND":
@@ -268,7 +288,8 @@ def formatUrl(urlPattern: Optional[str], text: Optional[str], hintingParams: Opt
                 url = url.replace(patternMatch, quote(f" AND ({enumValuesSeparated})"))
         else:
             raise Exception(f"Invalid format of Solr query URL: Unsupported markup: {patternMatch}")
-    
+
     url = url.replace(" ", "%20")
-    
+
+    logging.debug(url)
     return url
