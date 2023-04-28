@@ -13,7 +13,7 @@ def downgradeSearchHint2EnumItem(searchHint: models.SearchHint, collectionConfig
     downgraded = []
     for field, fieldValue in asNotNone(searchHint.fieldsAndValues).items():
         logging.debug(" ".join((field, fieldValue)))
-        configEnumValue = list(filter(lambda x: x.text == fieldValue, asNotNone(collectionConfig.enumValues)))
+        configEnumValue = list(filter(lambda x: str(getattr(x, collectionConfig.searchField)) == fieldValue, asNotNone(collectionConfig.enumValues)))
         if len(configEnumValue) == 0: continue
         item = models.EnumItem()
         item.id = configEnumValue[0].id
@@ -27,7 +27,7 @@ def downgradeWizardHint2EnumList(wizardHint: models.WizardHint, collectionConfig
     downgraded.enumType = wizardHint.field
     downgraded.values = []
     for fieldValue in asNotNone(wizardHint.values):
-        configFieldValues : list[models.CollectionConfigurationEnumValue] = list(filter(lambda x: x.text == fieldValue, asNotNone(collectionConfig.enumValues)))
+        configFieldValues : list[models.CollectionConfigurationEnumValue] = list(filter(lambda x: str(getattr(x, collectionConfig.searchField)) == fieldValue, asNotNone(collectionConfig.enumValues)))
         if len(configFieldValues) == 0: continue
         for configFieldValue in configFieldValues:
             item = models.EnumListItem()
