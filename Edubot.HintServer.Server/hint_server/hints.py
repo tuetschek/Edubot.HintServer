@@ -70,6 +70,13 @@ def generateWizardHints(enumValues: Optional[dict[str, list[str]]], notRelevantF
 
         fieldValues = sorted(
             fieldObj, key=lambda fieldValue: fieldObj[fieldValue]["count"], reverse=True)
+
+        # remove empty values
+        fieldValues = [fieldValue for fieldValue in fieldValues if fieldValue]
+        # skip if we have nothing left, or the only value is set for *all* results, so it doesn't help disambiguate
+        if not fieldValues or len(fieldValues) == 1 and fieldObj[fieldValues[0]]["count"] == totalFound:
+            continue
+
         candidates.append((field, fieldValues, score))
 
     candidates = sorted(candidates, key=lambda item: item[2])
