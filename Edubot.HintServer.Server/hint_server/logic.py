@@ -252,7 +252,7 @@ def formatUrl(urlPattern: Optional[str], lemmatizeUrlPattern: Optional[str],
 
     urlPattern, text, hintingParams, enumValues, notRelevantFields = defaultIfNone(urlPattern,""), defaultIfNone(text, ""), defaultIfNone(hintingParams, ""), defaultIfNone(enumValues, {}), defaultIfNone(notRelevantFields, {})
 
-    patternRegex = re.compile(r"^[^\}]*(\{[^\}]*\}).*$")
+    patternRegex = re.compile(r"^[^\}]*(?<!\\)(\{[^\}]*\}).*$")  # neg. lookbehind -- avoid escaped {
 
     # prepare lemmatized text if lemmatizer URL is non-empty
     lemmatized_text = lemmatize(lemmatizeUrlPattern, text) if lemmatizeUrlPattern else text
@@ -289,6 +289,7 @@ def formatUrl(urlPattern: Optional[str], lemmatizeUrlPattern: Optional[str],
         else:
             raise Exception(f"Invalid format of Solr query URL: Unsupported markup: {patternMatch}")
 
+    url = re.sub(r'\\([\\\{\}])', r'\1', url)  # unescape \, {, }
     url = url.replace(" ", "%20")
 
     logging.debug(url)
