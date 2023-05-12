@@ -240,7 +240,7 @@ def combineRedirectResponseAndOldSearchRequestToRedirectedSearchRequest(oldSearc
 
 def lemmatize(urlPattern: str, text: str):
     """Lemmatize using Morphodita API"""
-    url = urlPattern.replace("{text}", text)
+    url = urlPattern.replace("{text}", quote(text))
     connection = urlopen(url)
     response = json.load(connection)
     return ' '.join([tok['lemma'] for sent in response['result'] for tok in sent])
@@ -252,42 +252,48 @@ def formatUrl(urlPattern: Optional[str], lemmatizeUrlPattern: Optional[str],
 
     urlPattern, text, hintingParams, enumValues, notRelevantFields = defaultIfNone(urlPattern,""), defaultIfNone(text, ""), defaultIfNone(hintingParams, ""), defaultIfNone(enumValues, {}), defaultIfNone(notRelevantFields, {})
 
-    patternRegex = re.compile(r"^[^\}]*(?<!\\)(\{[^\}]*\}).*$")  # neg. lookbehind -- avoid escaped {
 
     # prepare lemmatized text if lemmatizer URL is non-empty
     lemmatized_text = lemmatize(lemmatizeUrlPattern, text) if lemmatizeUrlPattern else text
 
-    # Start with non-replaced pattern
-    url = urlPattern
+    repls = list(re.finditer(r'(\\*)(\{[^\}]*\})', urlPattern))
 
-    while True:
-        # Get another match
-        patternMatch = patternRegex.match(url)
-        if patternMatch is None: break
+    offset = 0
+    url = ''
+    for repl in repls:
+        backslashes = repl.group(1)
+        repl_start = repl.start() + len(backslashes)
+        url += urlPattern[offset:repl_start]
+        offset = repl.end()
+        if len(backslashes) % 2:  # odd number of backslashes -- escaped, skip
+            url += urlPattern[repl_start:offset]
+            continue
         # Replace known mark-ups
-        patternMatch = patternMatch.group(1)
+        patternMatch = repl.group(2)
         if patternMatch == "{hintingparams}":
-            url = url.replace(patternMatch, hintingParams)
+            url += hintingParams
         elif patternMatch == "{text|unquoted}":
-            url = url.replace(patternMatch, quote(text))
+            url += quote(text)
         elif patternMatch == "{text|quoted}":
-            url = url.replace(patternMatch, quote(f"\"{text}\""))
+            url += quote(f"\"{text}\"")
         elif patternMatch == "{text|lemmatized,unquoted}":
-            url = url.replace(patternMatch, quote(lemmatized_text))
+            url += quote(lemmatized_text)
         elif patternMatch == "{text|lemmatized,quoted}":
-            url = url.replace(patternMatch, quote(f"\"{lemmatized_text}\""))
+            url += quote(f"\"{lemmatized_text}\"")
         elif patternMatch.startswith("{enum:"):
             args = patternMatch[len("{enum:"):-1].split("|")
             if len(args) != 3 or args[1] != "convertFromId" or args[2] != "pre-AND":
                 raise Exception(f"Invalid format of Solr query URL: Unsupported markup: {patternMatch}")
             enumField = args[0]
             if enumField not in enumValues or len(enumValues[enumField]) == 0 or enumField in notRelevantFields:
-                url = url.replace(patternMatch, "")
+                pass
             else:
                 enumValuesSeparated = " OR ".join(map(lambda x: f"({enumField}:\"{x}\")", enumValues[enumField]))
-                url = url.replace(patternMatch, quote(f" AND ({enumValuesSeparated})"))
+                url += quote(f" AND ({enumValuesSeparated})")
         else:
             raise Exception(f"Invalid format of Solr query URL: Unsupported markup: {patternMatch}")
+
+    url += urlPattern[offset:]
 
     url = re.sub(r'\\([\\\{\}])', r'\1', url)  # unescape \, {, }
     url = url.replace(" ", "%20")
