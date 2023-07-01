@@ -1,6 +1,7 @@
 from flask.json import JSONEncoder
 
 from typing import Any, TypeVar, Type, Callable, Optional
+import re
 
 TNumber = TypeVar("TNumber", int, float, bool)
 T = TypeVar("T")
@@ -39,6 +40,9 @@ class ApiModel:
 
     def toJsonObject(self):
         return self.__dict__
+
+    def __repr__(self):
+        return str(self.__class__) + str(self.__dict__)
 
 
 class ApiModelJSONEncoder(JSONEncoder):
@@ -230,6 +234,7 @@ class RedirectRequest(ApiModel):
         self.detectEnums = getNumberFromDict(obj, "detectEnums", bool)
         self.doRedirection = getNumberFromDict(obj, "doRedirection", bool)
         self.textValue = getObjectFromDict(obj, "textValue", str)
+        self.lemmatized = getObjectFromDict(obj, "lemmatized", str)
         self.enumValues : Optional[dict[str, list[str]]] = getObjectFromDict(obj, "enumValues", dict)
         self.notRelevantValues : Optional[dict[str, bool]]  = {key: True for key in listOrEmpty(
             getArrayFromDict(obj, "notRelevantValues", lambda x: str(x)))}
@@ -252,7 +257,7 @@ class RedirectResponse(ApiModel):
         self.redirectedNotRelevantValues = getArrayFromDict(obj, "redirectedNotRelevantValues", lambda x: str(x))
 
 
-class AppConfiguration:
+class AppConfiguration(ApiModel):
     def __init__(self, obj: Optional[dict[str, Any]] = None, **kwargs):
         obj = kwargs if obj is None else obj
         self._addValuesFromDict(obj)
@@ -263,7 +268,7 @@ class AppConfiguration:
         self.collections = mapObjectChildrenFromDict(obj, "Collections", lambda x: { key: CollectionConfiguration(value) for key, value in x.items()})
 
 
-class DefaultConfiguration:
+class DefaultConfiguration(ApiModel):
     def __init__(self, obj: Optional[dict[str, Any]] = None, **kwargs):
         obj = kwargs if obj is None else obj
         self._addValuesFromDict(obj)
@@ -273,7 +278,7 @@ class DefaultConfiguration:
             obj, "DefaultCollection", str)
 
 
-class CollectionConfiguration:
+class CollectionConfiguration(ApiModel):
     def __init__(self, obj: Optional[dict[str, Any]] = None, **kwargs):
         obj = kwargs if obj is None else obj
         self._addValuesFromDict(obj)
@@ -292,12 +297,13 @@ class CollectionConfiguration:
             obj, "DropdownFields", lambda x: x)
         self.enumValues = getArrayFromDict(
             obj, "EnumValues", lambda x: CollectionConfigurationEnumValue(x))
+        self.keywords = getArrayFromDict(obj, "Keywords", lambda x: CollectionConfigurationKeyword(x))
         self.precomputedSolrUrlParams: Optional[str] = None
         self.precomputedValueCodeToValueText: Optional[dict[str, str]] = None
-        self.precomputedValueFieldAndTextToValue: Optional[dict[(str, str), CollectionConfigurationEnumValue]] = None
+        self.precomputedValueCodeToValue: Optional[dict[str, CollectionConfigurationEnumValue]] = None
 
 
-class CollectionConfigurationEnumValue:
+class CollectionConfigurationEnumValue(ApiModel):
     def __init__(self, obj: Optional[dict[str, Any]] = None, **kwargs):
         obj = kwargs if obj is None else obj
         self._addValuesFromDict(obj)
@@ -309,6 +315,30 @@ class CollectionConfigurationEnumValue:
         self.field = getObjectFromDict(obj, "Field", str)
         self.isUnknown = getNumberFromDict(obj, "IsUnknown", bool)
         self.isNotRelevant = getNumberFromDict(obj, "IsNotRelevant", bool)
+
+    def __repr__(self):
+        return str(self.__class__) + str(self.__dict__)
+
+
+class CollectionConfigurationKeyword(ApiModel):
+    def __init__(self, obj: Optional[dict[str, Any]] = None, **kwargs):
+        obj = kwargs if obj is None else obj
+        self._addValuesFromDict(obj)
+
+    def _addValuesFromDict(self, obj: dict[str, Any]):
+        self.id = getObjectFromDict(obj, "id", str)
+        self.enumValueCode = getObjectFromDict(obj, "enumValueCode", str)
+        self.redirection =  getObjectFromDict(obj, "redirection", str)
+        self.isDetected =  getNumberFromDict(obj, "isDetected", bool)
+        self.regex =  getObjectFromDict(obj, "regex", str)
+        if self.regex:
+            self.regex = re.compile(self.regex, re.IGNORECASE)
+        self.anchors = getObjectFromDict(obj, "anchors", str)
+        self.description = getObjectFromDict(obj, "description", str)
+        self.text = getObjectFromDict(obj, "text", str)
+
+    def __repr__(self):
+        return str(self.__class__) + str(self.__dict__)
 
 
 NotRelevantFields = dict[str, bool]
