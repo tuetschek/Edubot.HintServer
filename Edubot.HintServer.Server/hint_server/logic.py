@@ -32,7 +32,7 @@ def search(request: models.SearchRequest, config: models.AppConfiguration) -> mo
     hintingparams = getOrCreateSolrUrlParams(collectionConfig)
 
     # prepare lemmatized text if lemmatizer URL is non-empty
-    lemmatized = lemmatize(collectionConfig.lemmatizeUrlPattern, request.query) if collectionConfig.lemmatizeUrlPattern else request.query
+    lemmatized = lemmatize(collectionConfig.lemmatizeUrlPattern, request.query)
 
     # Conditionally redirect
     if request.detectEnums is True or request.doRedirection is True:
@@ -128,7 +128,7 @@ def redirect(request: models.RedirectRequest, config: models.CollectionConfigura
     response = models.RedirectResponse()
     evCode2Val = getOrCreateValueCodeToValueMapping(config)
 
-    matches = [(kw, kw.regex.search(request.lemmatized)) for kw in config.keywords if kw.isDetected and kw.regex]
+    matches = [(kw, kw.regex.search(request.lemmatized.lemmatized)) for kw in config.keywords if kw.isDetected and kw.regex]
     enum_matches = [(kw, m) for kw, m in matches if m and kw.enumValueCode]
 
     # Detect
@@ -136,13 +136,13 @@ def redirect(request: models.RedirectRequest, config: models.CollectionConfigura
         # remove any matches that have enumValueCode
         # TODO do this on non-lemmatized text
         enum_matches.sort(reverse=True, key=lambda i: i[1].start())
-        reduced_text = request.lemmatized
+        reduced_text = request.lemmatized.plain
         enum_ret = []
         for kw, m in enum_matches:
-            reduced_text = reduced_text[:m.start()] + reduced_text[m.end():]
+            reduced_text = reduced_text[:request.lemmatized.mapIndex(m.start())] + reduced_text[request.lemmatized.mapIndex(m.end()):]
             enum_ret.append(evCode2Val.get(kw.enumValueCode))
         response.anyDetection = True
-        response.detectedTextValue = reduced_text
+        response.detectedTextValue = reduced_text.strip()
         response.detectedEnumValues = enum_ret
         response.detectedNotRelevantValues = [field for field in request.notRelevantValues]
     else:
@@ -208,7 +208,7 @@ def getOrCreateValueCodeToValueMapping(collectionConfig: models.CollectionConfig
     return mapping
 
 
-def mapSearchRequestToRedirectRequest(searchRequest: models.SearchRequest, lemmatized: str, collectionConfig: models.CollectionConfiguration) -> models.RedirectRequest:
+def mapSearchRequestToRedirectRequest(searchRequest: models.SearchRequest, lemmatized: models.LemmatizedString, collectionConfig: models.CollectionConfiguration) -> models.RedirectRequest:
     evCode2Text = getOrCreateValueCodeToTextMapping(collectionConfig)
 
     req = models.RedirectRequest()
@@ -261,22 +261,36 @@ def addRedirectToResponse(oldSearchRequest: models.SearchRequest, redirectRespon
 
 
 def lemmatize(urlPattern: str, text: str):
-    """Lemmatize using Morphodita API"""
-    url = urlPattern.replace("{text}", quote(text))
-    connection = urlopen(url)
-    response = json.load(connection)
-    return ' '.join([tok['lemma'] for sent in response['result'] for tok in sent])
+    """Lemmatize using Morphodita API, if URL is set up; produce alignment between original and lemmatized"""
+    if urlPattern:
+        # get the lemmatized version
+        url = urlPattern.replace("{text}", quote(text))
+        connection = urlopen(url)
+        response = json.load(connection)
+        # compute alignment
+        lemmatized = ''
+        alignment = [(0, 0)]
+        plain_pos = 0
+        for tok in [tok for sent in response['result'] for tok in sent]:
+            space = tok.get('space', '')
+            lemmatized = lemmatized + tok['lemma'] + space
+            plain_pos += len(tok['token']) + len(space)
+            alignment.append((len(lemmatized), plain_pos))
+        return models.LemmatizedString(plain=text, lemmatized=lemmatized, alignment=alignment)
+    else:
+        # backoff to no lemmatization
+        return models.LemmatizedString(plain=text, lemmatized=text)
 
 
 def formatUrl(urlPattern: Optional[str],
-              text: Optional[str], lemmatizedText: Optional[str],
+              text: Optional[str], lemmatizedText: Optional[models.LemmatizedString],
               hintingParams: Optional[str], enumValues: Optional[dict[str, list[str]]],
               notRelevantFields: Optional[dict[str, bool]]) -> str:
 
     urlPattern, text, hintingParams, enumValues, notRelevantFields = defaultIfNone(urlPattern, ""), defaultIfNone(text, ""), defaultIfNone(hintingParams, ""), defaultIfNone(enumValues, {}), defaultIfNone(notRelevantFields, {})
 
     # default lemmatized to plain text, if not available
-    lemmatized_text = defaultIfNone(lemmatizedText, text)
+    lemmatized_text = defaultIfNone(lemmatizedText, models.LemmatizedString(plain=text, lemmatized=text))
 
     repls = list(re.finditer(r'(\\*)(\{[^\}]*\})', urlPattern))
 
@@ -299,9 +313,9 @@ def formatUrl(urlPattern: Optional[str],
         elif patternMatch == "{text|quoted}":
             url += quote(f"\"{text}\"")
         elif patternMatch == "{text|lemmatized,unquoted}":
-            url += quote(lemmatized_text)
+            url += quote(lemmatized_text.lemmatized)
         elif patternMatch == "{text|lemmatized,quoted}":
-            url += quote(f"\"{lemmatized_text}\"")
+            url += quote(f"\"{lemmatized_text.lemmatized}\"")
         elif patternMatch.startswith("{enum:"):
             args = patternMatch[len("{enum:"):-1].split("|")
             if len(args) != 3 or args[1] != "convertFromId" or args[2] != "pre-AND":

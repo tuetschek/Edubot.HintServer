@@ -2,6 +2,7 @@ from flask.json import JSONEncoder
 
 from typing import Any, TypeVar, Type, Callable, Optional
 import re
+import bisect
 
 TNumber = TypeVar("TNumber", int, float, bool)
 T = TypeVar("T")
@@ -316,9 +317,6 @@ class CollectionConfigurationEnumValue(ApiModel):
         self.isUnknown = getNumberFromDict(obj, "IsUnknown", bool)
         self.isNotRelevant = getNumberFromDict(obj, "IsNotRelevant", bool)
 
-    def __repr__(self):
-        return str(self.__class__) + str(self.__dict__)
-
 
 class CollectionConfigurationKeyword(ApiModel):
     def __init__(self, obj: Optional[dict[str, Any]] = None, **kwargs):
@@ -337,9 +335,27 @@ class CollectionConfigurationKeyword(ApiModel):
         self.description = getObjectFromDict(obj, "description", str)
         self.text = getObjectFromDict(obj, "text", str)
 
-    def __repr__(self):
-        return str(self.__class__) + str(self.__dict__)
 
+class LemmatizedString(ApiModel):
+
+    def __init__(self, obj: Optional[dict[str, Any]] = None, **kwargs):
+        obj = kwargs if obj is None else obj
+        self._addValuesFromDict(obj)
+
+    def _addValuesFromDict(self, obj: dict[str, Any]):
+        self.plain = getObjectFromDict(obj, "plain", str)
+        self.lemmatized = getObjectFromDict(obj, "lemmatized", str)
+        # lemmatized-to-plain, must start with 0,0 and end with len,len
+        self.alignment = getObjectFromDict(obj, "alignment", list)
+        if self.alignment:
+            assert(self.alignment[0] == (0,0) and self.alignment[-1] == (len(self.lemmatized), len(self.plain)))
+
+    def mapIndex(self, idx):
+        if not self.alignment:
+            return idx
+        pos = bisect.bisect_left(self.alignment, (idx, -1))  # should go left of given position (2nd tuple part is positive)
+        pos = self.alignment[max(pos - 1, 0)]  # but never go left of 0
+        return pos[1] + idx-pos[0]  # same character from start of given word
 
 NotRelevantFields = dict[str, bool]
 SolrResponse = dict
