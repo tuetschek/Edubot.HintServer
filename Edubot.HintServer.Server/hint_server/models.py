@@ -1,6 +1,8 @@
 from flask.json import JSONEncoder
 
 from typing import Any, TypeVar, Type, Callable, Optional
+import re
+import bisect
 
 TNumber = TypeVar("TNumber", int, float, bool)
 T = TypeVar("T")
@@ -40,6 +42,9 @@ class ApiModel:
     def toJsonObject(self):
         return self.__dict__
 
+    def __repr__(self):
+        return str(self.__class__) + str(self.__dict__)
+
 
 class ApiModelJSONEncoder(JSONEncoder):
     def default(self, object):
@@ -57,6 +62,7 @@ class SearchRequest(ApiModel):
     def _addValuesFromDict(self, obj: dict[str, Any]):
         self.userId = getObjectFromDict(obj, "userId", str)
         self.query = getObjectFromDict(obj, "query", str)
+        self.lemmatizedQuery = getObjectFromDict(obj, "lemmatizedQuery", str)
         self.enumValues = getArrayFromDict(
             obj, "enumValues", lambda x: EnumList(x))
         self.startIndex = getNumberFromDict(obj, "startIndex", int)
@@ -230,6 +236,7 @@ class RedirectRequest(ApiModel):
         self.detectEnums = getNumberFromDict(obj, "detectEnums", bool)
         self.doRedirection = getNumberFromDict(obj, "doRedirection", bool)
         self.textValue = getObjectFromDict(obj, "textValue", str)
+        self.lemmatized = getObjectFromDict(obj, "lemmatized", str)
         self.enumValues : Optional[dict[str, list[str]]] = getObjectFromDict(obj, "enumValues", dict)
         self.notRelevantValues : Optional[dict[str, bool]]  = {key: True for key in listOrEmpty(
             getArrayFromDict(obj, "notRelevantValues", lambda x: str(x)))}
@@ -245,14 +252,16 @@ class RedirectResponse(ApiModel):
         self.anyDetection = getNumberFromDict(obj, "anyDetection", bool)
         self.anyRedirection = getNumberFromDict(obj, "anyRedirection", bool)
         self.detectedTextValue = getObjectFromDict(obj, "detectedTextValue", str)
+        self.detectedLemmatizedValue = getObjectFromDict(obj, "detectedLemmatizedValue", str)
         self.detectedEnumValues : Optional[dict[str, list[str]]] = getObjectFromDict(obj, "detectedEnumValues", dict)
         self.detectedNotRelevantValues = getArrayFromDict(obj, "redirectedNotRelevantValues", lambda x: str(x))
         self.redirectedTextValue = getObjectFromDict(obj, "redirectedTextValue", str)
+        self.redirectedLemmatizedValue = getObjectFromDict(obj, "redirectedLemmatizedValue", str)
         self.redirectedEnumValues : Optional[dict[str, list[str]]] = getObjectFromDict(obj, "redirectedEnumValues", dict)
         self.redirectedNotRelevantValues = getArrayFromDict(obj, "redirectedNotRelevantValues", lambda x: str(x))
 
 
-class AppConfiguration:
+class AppConfiguration(ApiModel):
     def __init__(self, obj: Optional[dict[str, Any]] = None, **kwargs):
         obj = kwargs if obj is None else obj
         self._addValuesFromDict(obj)
@@ -263,7 +272,7 @@ class AppConfiguration:
         self.collections = mapObjectChildrenFromDict(obj, "Collections", lambda x: { key: CollectionConfiguration(value) for key, value in x.items()})
 
 
-class DefaultConfiguration:
+class DefaultConfiguration(ApiModel):
     def __init__(self, obj: Optional[dict[str, Any]] = None, **kwargs):
         obj = kwargs if obj is None else obj
         self._addValuesFromDict(obj)
@@ -273,7 +282,7 @@ class DefaultConfiguration:
             obj, "DefaultCollection", str)
 
 
-class CollectionConfiguration:
+class CollectionConfiguration(ApiModel):
     def __init__(self, obj: Optional[dict[str, Any]] = None, **kwargs):
         obj = kwargs if obj is None else obj
         self._addValuesFromDict(obj)
@@ -292,12 +301,13 @@ class CollectionConfiguration:
             obj, "DropdownFields", lambda x: x)
         self.enumValues = getArrayFromDict(
             obj, "EnumValues", lambda x: CollectionConfigurationEnumValue(x))
+        self.keywords = getArrayFromDict(obj, "Keywords", lambda x: CollectionConfigurationKeyword(x))
         self.precomputedSolrUrlParams: Optional[str] = None
         self.precomputedValueCodeToValueText: Optional[dict[str, str]] = None
-        self.precomputedValueFieldAndTextToValue: Optional[dict[(str, str), CollectionConfigurationEnumValue]] = None
+        self.precomputedValueCodeToValue: Optional[dict[str, CollectionConfigurationEnumValue]] = None
 
 
-class CollectionConfigurationEnumValue:
+class CollectionConfigurationEnumValue(ApiModel):
     def __init__(self, obj: Optional[dict[str, Any]] = None, **kwargs):
         obj = kwargs if obj is None else obj
         self._addValuesFromDict(obj)
@@ -310,6 +320,45 @@ class CollectionConfigurationEnumValue:
         self.isUnknown = getNumberFromDict(obj, "IsUnknown", bool)
         self.isNotRelevant = getNumberFromDict(obj, "IsNotRelevant", bool)
 
+
+class CollectionConfigurationKeyword(ApiModel):
+    def __init__(self, obj: Optional[dict[str, Any]] = None, **kwargs):
+        obj = kwargs if obj is None else obj
+        self._addValuesFromDict(obj)
+
+    def _addValuesFromDict(self, obj: dict[str, Any]):
+        self.id = getObjectFromDict(obj, "id", str)
+        self.enumValueCode = getObjectFromDict(obj, "enumValueCode", str)
+        self.redirection =  getObjectFromDict(obj, "redirection", str)
+        self.isDetected =  getNumberFromDict(obj, "isDetected", bool)
+        self.regex =  getObjectFromDict(obj, "regex", str)
+        if self.regex:
+            self.regex = re.compile(self.regex, re.IGNORECASE)
+        self.anchors = getObjectFromDict(obj, "anchors", str)
+        self.description = getObjectFromDict(obj, "description", str)
+        self.text = getObjectFromDict(obj, "text", str)
+
+
+class LemmatizedString(ApiModel):
+
+    def __init__(self, obj: Optional[dict[str, Any]] = None, **kwargs):
+        obj = kwargs if obj is None else obj
+        self._addValuesFromDict(obj)
+
+    def _addValuesFromDict(self, obj: dict[str, Any]):
+        self.plain = getObjectFromDict(obj, "plain", str)
+        self.lemmatized = getObjectFromDict(obj, "lemmatized", str)
+        # lemmatized-to-plain, must start with 0,0 and end with len,len
+        self.alignment = getObjectFromDict(obj, "alignment", list)
+        if self.alignment:
+            assert(self.alignment[0] == (0,0) and self.alignment[-1] == (len(self.lemmatized), len(self.plain)))
+
+    def mapIndex(self, idx):
+        if not self.alignment:
+            return idx
+        pos = bisect.bisect_left(self.alignment, (idx, -1))  # should go left of given position (2nd tuple part is positive)
+        pos = self.alignment[max(pos - 1, 0)]  # but never go left of 0
+        return pos[1] + idx-pos[0]  # same character from start of given word
 
 NotRelevantFields = dict[str, bool]
 SolrResponse = dict

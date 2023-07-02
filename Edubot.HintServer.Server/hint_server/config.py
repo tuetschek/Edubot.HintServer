@@ -41,6 +41,7 @@ def readAndValidateConfig(path: str):
     for collectionName, collectionObj in config.collections.items():
         collectionPath = f"root/Collections/{collectionName}"
         enumValuePath = f"{collectionPath}/EnumValues"
+        keywordsPath = f"{collectionPath}/Keywords"
 
         if isNone(collectionObj.solrQueryUrlPattern, collectionPath + "/SolrQueryUrlPattern"): return
         if isNone(collectionObj.lemmatizeUrlPattern, collectionPath + "/LemmatizeUrlPattern"): return
@@ -50,6 +51,7 @@ def readAndValidateConfig(path: str):
         if isNone(collectionObj.searchHintFields, collectionPath + "/SearchHintFields"): return
         if isNone(collectionObj.dropdownFields, collectionPath + "/DropdownFields"): return
         if isNone(collectionObj.enumValues, enumValuePath): return
+        if isNone(collectionObj.keywords, keywordsPath): return
 
         assert collectionObj.searchField in ["id", "code", "text"]
 

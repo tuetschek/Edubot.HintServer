@@ -5,12 +5,27 @@
   "Collections": {
     "DevEma": {
       "SolrQueryUrlPattern": "http://quest.ms.mff.cuni.cz/namuddis/edubotmastersolr/ema/select?q=(nazev:({text|unquoted})^10 OR nazev_lemmatized:({text|lemmatized,unquoted})^8 OR nazev_lemmatized_ascii:({text|lemmatized,unquoted})^6 OR klicova_slova:({text|unquoted})^10 OR klicova_slova_lemmatized:({text|lemmatized,unquoted})^10 OR klicova_slova_lemmatized_ascii:({text|lemmatized,unquoted})^8 OR popis:({text|unquoted})^5 OR popis_lemmatized:({text|lemmatized,unquoted})^4 OR popis_lemmatized_ascii:({text|lemmatized,unquoted})^4 OR nazev_zdroje:({text|unquoted})^3 OR nazev_feedu:({text|unquoted})^3 OR url_search:({text|unquoted})^3 OR autor:({text|unquoted})^3){enum:stupen_vzdelavani|convertFromId|pre-AND}{enum:typ|convertFromId|pre-AND}{enum:obor_vzdelavani|convertFromId|pre-AND}{enum:jazyk|convertFromId|pre-AND}{enum:dostupnost|convertFromId|pre-AND}{enum:licence|convertFromId|pre-AND}&defType=edismax&fl=*,score&start=0&boost=celkova_reputace&sort=score desc&rows=10&wt=json&{hintingparams}",
-      "LemmatizeUrlPattern": "http://lindat.mff.cuni.cz/services/morphodita/api/tag?data={text}&output=json",
+      "LemmatizeUrlPattern": "http://lindat.mff.cuni.cz/services/morphodita/api/tag?data={text}&output=json&convert_tagset=strip_lemma_id",
       "IdField": "id",
       "SearchField": "text",
-      "WizardHintFields": ["stupen_vzdelavani", "rocnik", "typ", "jazyk"],
-      "SearchHintFields": ["stupen_vzdelavani", "rocnik", "typ", "jazyk"],
-      "DropdownFields": ["typ", "jazyk", "licence", "dostupnost"],
+      "WizardHintFields": [
+        "stupen_vzdelavani",
+        "rocnik",
+        "typ",
+        "jazyk"
+      ],
+      "SearchHintFields": [
+        "stupen_vzdelavani",
+        "rocnik",
+        "typ",
+        "jazyk"
+      ],
+      "DropdownFields": [
+        "typ",
+        "jazyk",
+        "licence",
+        "dostupnost"
+      ],
       "EnumValues": [
         {
           "Id": 125,
@@ -1003,6 +1018,1160 @@
           "Text": "nelze určit",
           "IsUnknown": false,
           "IsNotRelevant": false
+        }
+      ],
+      "Keywords": [
+        {
+          "id": "MŠ [typ vzdělávání]",
+          "enumValueCode": "2-P",
+          "isDetected": 0
+        },
+        {
+          "id": "MŠ [ročník]",
+          "enumValueCode": "3-MS",
+          "redirection": "MŠ [typ vzdělávání]",
+          "isDetected": 1,
+          "regex": "(pro )?(MŠ|školka|mateřský škola)",
+          "anchors": "MŠ;školka;škola"
+        },
+        {
+          "id": "ZŠ [typ vzdělávání]",
+          "enumValueCode": "2-Z",
+          "isDetected": 0
+        },
+        {
+          "id": "ZŠ13 [ročník]",
+          "enumValueCode": "3-Z13",
+          "redirection": "ZŠ [typ vzdělávání]",
+          "isDetected": 1,
+          "regex": "(pro )?(([1-3]( \\.)?|první|druhý|třetí)( (a|až|nebo|\\-) )?)+ (ročník|třída)(?! SŠ| střední škola)( ZŠ| základní škola)?",
+          "anchors": "třída;ročník"
+        },
+        {
+          "id": "ZŠ45 [ročník]",
+          "enumValueCode": "3-Z45",
+          "redirection": "ZŠ [typ vzdělávání]",
+          "isDetected": 1,
+          "regex": "(pro )?(([4-5]( \\.)?|čtvrtý|pátý)( (a|až|nebo|\\-) )?)+ (ročník|třída)(?! SŠ| střední škola)( ZŠ| základní škola)?",
+          "anchors": "třída;ročník"
+        },
+        {
+          "id": "ZŠ67 [ročník]",
+          "enumValueCode": "3-Z67",
+          "redirection": "ZŠ [typ vzdělávání]",
+          "isDetected": 1,
+          "regex": "(pro )?(([6-7]( \\.)?|šestý|sedmý)( (a|až|nebo|\\-) )?)+ (ročník|třída)(?! SŠ| střední škola)( ZŠ| základní škola)?",
+          "anchors": "třída;ročník"
+        },
+        {
+          "id": "ZŠ89 [ročník]",
+          "enumValueCode": "3-Z67",
+          "redirection": "ZŠ [typ vzdělávání]",
+          "isDetected": 1,
+          "regex": "(pro )?(([8-9]( \\.)?|osmý|devátý)( (a|až|nebo|\\-) )?)+ (ročník|třída)(?! SŠ| střední škola)( ZŠ| základní škola)?",
+          "anchors": "třída;ročník"
+        },
+        {
+          "id": "Gymnázium [typ vzdělávání]",
+          "enumValueCode": "2-G",
+          "isDetected": 1,
+          "regex": "(pro )?(gymnázium|prima|primum|tercie|kvarta|kvinta|sexta|septima|oktáva)",
+          "anchors": "gymnázium;prima;primum;tercie;kvarta;kvinta;sexta;septima;oktáva"
+        },
+        {
+          "id": "Odborné vzdělávání [typ vzdělávání]",
+          "enumValueCode": "2-O",
+          "isDetected": 0
+        },
+        {
+          "id": "SŠ [ročník]",
+          "enumValueCode": "3-SS",
+          "redirection": "Odborné vzdělávání [typ vzdělávání]",
+          "isDetected": 1,
+          "regex": "(pro )?(SŠ|střední škola)",
+          "anchors": "SŠ;škola"
+        },
+        {
+          "id": "VŠ [ročník]",
+          "enumValueCode": "3-VS",
+          "isDetected": 1,
+          "regex": "(pro )?(VŠ|vysoký škola|univerzitní|univerzita)",
+          "anchors": "VŠ;škola;univezritní;univerzita"
+        },
+        {
+          "id": "ZUŠ [typ vzdělávání]",
+          "enumValueCode": "2-U",
+          "isDetected": 1,
+          "regex": "(pro )?(ZUŠ|základní umělecký škola)",
+          "anchors": "ZUŠ;škola"
+        },
+        {
+          "id": "ČJ [vzdělávací obor]",
+          "enumValueCode": "9-01",
+          "isDetected": 1,
+          "regex": "(do )?(ČJ|čeština|český jazyk|literatura)",
+          "anchors": "ČJ;čeština;jazyk;literatura"
+        },
+        {
+          "id": "CJ [vzdělávací obor]",
+          "enumValueCode": "9-02",
+          "isDetected": 1,
+          "regex": "(do )?(AJ|angličtina|cizí jazyk)",
+          "anchors": "AJ;angličtina;jazyk"
+        },
+        {
+          "id": "Matematika [vzdělávací obor]",
+          "enumValueCode": "9-03",
+          "redirection": "Matematika [pojem]",
+          "isDetected": 1,
+          "regex": "(do )?(matematika)",
+          "anchors": "matematika"
+        },
+        {
+          "id": "D [vzdělávací obor]",
+          "enumValueCode": "9-05",
+          "isDetected": 1,
+          "regex": "(do )?(dějepis)",
+          "anchors": "dějepis"
+        },
+        {
+          "id": "ZSV [vzdělávací obor]",
+          "enumValueCode": "9-06",
+          "isDetected": 1,
+          "regex": "(do )?(výchova k občanství|občanská výuka|občanská nauka|základ společenský věda|ZSV)",
+          "anchors": "výchova;výuka;nauka;věda;ZSV"
+        },
+        {
+          "id": "F [vzdělávací obor]",
+          "enumValueCode": "9-07",
+          "isDetected": 1,
+          "regex": "(do )?(fyzika)",
+          "anchors": "fyzika"
+        },
+        {
+          "id": "Ch [vzdělávací obor]",
+          "enumValueCode": "9-08",
+          "isDetected": 1,
+          "regex": "(do )?(chemie)",
+          "anchors": "chemie"
+        },
+        {
+          "id": "Bi [vzdělávací obor]",
+          "enumValueCode": "9-09",
+          "isDetected": 1,
+          "regex": "(do )?(přírodopis|přírodověda|biologie)",
+          "anchors": "přírodopis;přírodověda;biologie"
+        },
+        {
+          "id": "Z [vzdělávací obor]",
+          "enumValueCode": "9-10",
+          "isDetected": 1,
+          "regex": "(do )?(zeměpis|geografie|geologie)",
+          "anchors": "zeměpis;geografie;geologie"
+        },
+        {
+          "id": "HV [vzdělávací obor]",
+          "enumValueCode": "9-11",
+          "isDetected": 1,
+          "regex": "(do )?(hudební výchova|HV)",
+          "anchors": "výchova;HV"
+        },
+        {
+          "id": "VV [vzdělávací obor]",
+          "enumValueCode": "9-12",
+          "isDetected": 1,
+          "regex": "(do )?(výtvarný výchova|VV|výtvarka)",
+          "anchors": "výchova;VV;výtvarka"
+        },
+        {
+          "id": "TV [vzdělávací obor]",
+          "enumValueCode": "9-13",
+          "isDetected": 1,
+          "regex": "(do )?(tělesný výchova)",
+          "anchors": "výchova"
+        },
+        {
+          "id": "DV [vzdělávací obor]",
+          "enumValueCode": "9-16",
+          "isDetected": 1,
+          "regex": "(do )?(dramatický výchova)",
+          "anchors": "výchova"
+        },
+        {
+          "id": "ICT [vzdělávací obor]",
+          "enumValueCode": "9-19",
+          "isDetected": 1,
+          "regex": "(do )?(informatika|ICT|IKT)",
+          "anchors": "informatika;ICT;IKT"
+        },
+        {
+          "id": "Materiál ke stažení [typ materiálu]",
+          "description": "Na toto je přesměrováno",
+          "enumValueCode": "8-MS",
+          "isDetected": 0
+        },
+        {
+          "id": "Interaktivní cvičení [typ materiálu]",
+          "enumValueCode": "8-IC",
+          "isDetected": 1,
+          "regex": "(interaktivní cvičení)( na)?",
+          "anchors": "cvičení"
+        },
+        {
+          "id": "Článek [typ materiálu]",
+          "enumValueCode": "8-CL",
+          "isDetected": 1,
+          "regex": "(článek)( na)?",
+          "anchors": "článek"
+        },
+        {
+          "id": "Video [typ materiálu]",
+          "enumValueCode": "8-VI",
+          "isDetected": 1,
+          "regex": "(video)( na)?",
+          "anchors": "video"
+        },
+        {
+          "id": "Pracovní list [typ materiálu]",
+          "enumValueCode": "8-PL",
+          "redirection": "Materiál ke stažení [typ materiálu]",
+          "isDetected": 1,
+          "regex": "(pracovní list)( na)?",
+          "anchors": "list"
+        },
+        {
+          "id": "Prezentace [typ materiálu]",
+          "enumValueCode": "8-PR",
+          "redirection": "Materiál ke stažení [typ materiálu]",
+          "isDetected": 1,
+          "regex": "(prezentace)( na)?",
+          "anchors": "prezentace"
+        },
+        {
+          "id": "Kurz [typ materiálu]",
+          "enumValueCode": "8-OK",
+          "isDetected": 1,
+          "regex": "(online kurz)( na)?",
+          "anchors": "kurz"
+        },
+        {
+          "id": "Test [typ materiálu]",
+          "enumValueCode": "8-TE",
+          "redirection": "Materiál ke stažení [typ materiálu]",
+          "isDetected": 1,
+          "regex": "(test)( na)?",
+          "anchors": "test"
+        },
+        {
+          "id": "Matematika [pojem]",
+          "description": "Na toto je přesměrováno",
+          "text": "matematika",
+          "isDetected": 0
+        },
+        {
+          "id": "Číslo [pojem]",
+          "description": "Není detekováno ani přesměrováno",
+          "text": "čísla",
+          "isDetected": 0
+        },
+        {
+          "id": "Přirozené číslo [pojem]",
+          "description": "Není detekováno ani přesměrováno",
+          "text": "přirozená čísla",
+          "isDetected": 0
+        },
+        {
+          "id": "Prvočíslo [pojem]",
+          "description": "Není detekováno ani přesměrováno",
+          "text": "prvočísla",
+          "isDetected": 0
+        },
+        {
+          "id": "Složené číslo [pojem]",
+          "description": "Není detekováno ani přesměrováno",
+          "text": "složená čísla",
+          "isDetected": 0
+        },
+        {
+          "id": "Dělitelnost [pojem]",
+          "description": "Není detekováno ani přesměrováno",
+          "text": "dělitelnost",
+          "isDetected": 0
+        },
+        {
+          "id": "Zbytek po dělení [pojem]",
+          "text": "zbytek po dělení",
+          "isDetected": 0
+        },
+        {
+          "id": "Základní věta aritmetiky [pojem]",
+          "description": "Není detekováno ani přesměrováno",
+          "text": "základní věta aritmetiky",
+          "isDetected": 0
+        },
+        {
+          "id": "Soudělnost [pojem]",
+          "description": "Není detekováno ani přesměrováno",
+          "text": "soudělnost",
+          "isDetected": 0
+        },
+        {
+          "id": "Nejmenší společný násobek [pojem]",
+          "description": "Na toto je přesměrováno",
+          "text": "nejmenší společný násobek",
+          "isDetected": 0
+        },
+        {
+          "id": "Největší společný dělitel [pojem]",
+          "description": "Na toto je přesměrováno",
+          "text": "největší společný dělitel",
+          "isDetected": 0
+        },
+        {
+          "id": "Nejmenší společný násobek [zkratka]",
+          "text": "nsn",
+          "redirection": "Nejmenší společný násobek [pojem]",
+          "isDetected": 1,
+          "regex": "nsn",
+          "anchors": "nsn"
+        },
+        {
+          "id": "Největší společný dělitel [zkratka]",
+          "text": "nsd",
+          "redirection": "Největší společný dělitel [pojem]",
+          "isDetected": 1,
+          "regex": "nsd",
+          "anchors": "nsd"
+        },
+        {
+          "id": "Euklidův algoritmus [pojem]",
+          "text": "Euklidův algoritmus",
+          "redirection": "Největší společný dělitel [pojem]",
+          "isDetected": 1,
+          "regex": "(Euklidův algoritmus)",
+          "anchors": "Euklidův;algoritmus"
+        },
+        {
+          "id": "Celé číslo [pojem]",
+          "description": "Není detekováno ani přesměrováno",
+          "text": "celá čísla",
+          "isDetected": 0
+        },
+        {
+          "id": "Číselná osa [pojem]",
+          "description": "Není detekováno ani přesměrováno",
+          "text": "číselná osa",
+          "isDetected": 0
+        },
+        {
+          "id": "Desetinné číslo [pojem]",
+          "description": "Není detekováno ani přesměrováno",
+          "text": "desetinná čísla",
+          "isDetected": 0
+        },
+        {
+          "id": "Desítková soustava [pojem]",
+          "description": "Není detekováno ani přesměrováno",
+          "text": "desítková soustava",
+          "isDetected": 0
+        },
+        {
+          "id": "Operace s čísly [pojem]",
+          "description": "Na toto je přesměrováno",
+          "text": "operace s čísly",
+          "isDetected": 0
+        },
+        {
+          "id": "Sčítání čísel [pojem]",
+          "text": "sčítání",
+          "redirection": "Operace s čísly [pojem]",
+          "isDetected": 1,
+          "regex": "(sčítání|sčítat|součet)",
+          "anchors": "sčítání;součet;sčítat"
+        },
+        {
+          "id": "Odčítání čísel [pojem]",
+          "text": "odčítání",
+          "redirection": "Operace s čísly [pojem]",
+          "isDetected": 1,
+          "regex": "(odčítání|odčítat)",
+          "anchors": "odčítání;odčítat"
+        },
+        {
+          "id": "Násobení čísel [pojem]",
+          "text": "násobení",
+          "redirection": "Operace s čísly [pojem]",
+          "isDetected": 1,
+          "regex": "(násobení|násobit)",
+          "anchors": "násobení;násobit"
+        },
+        {
+          "id": "Dělení čísel [pojem]",
+          "text": "dělení",
+          "redirection": "Operace s čísly [pojem]",
+          "isDetected": 1,
+          "regex": "(dělení|dělit)( \\w+)? číslo",
+          "anchors": "dělení;dělit"
+        },
+        {
+          "id": "Slovní úloha [pojem]",
+          "description": "Není detekováno ani přesměrováno",
+          "text": "slovní úloha",
+          "isDetected": 0
+        },
+        {
+          "id": "Porovnávání čísel [pojem]",
+          "description": "Není detekováno ani přesměrováno",
+          "text": "porovnávání",
+          "isDetected": 0
+        },
+        {
+          "id": "Zlomek [pojem]",
+          "description": "Na toto je přesměrováno",
+          "text": "zlomky",
+          "isDetected": 0
+        },
+        {
+          "id": "Čitatel [pojem]",
+          "text": "čitatel",
+          "redirection": "Zlomek [pojem]",
+          "isDetected": 1,
+          "regex": "(čitatel)( zlomek)?",
+          "anchors": "čitatel"
+        },
+        {
+          "id": "Jmenovatel [pojem]",
+          "text": "jmenovatel",
+          "redirection": "Zlomek [pojem]",
+          "isDetected": 1,
+          "regex": "(jmenovatel)( zlomek)?",
+          "anchors": "jmenovatel"
+        },
+        {
+          "id": "Převod na společného jmenovatele [pojem]",
+          "description": "Není detekováno",
+          "text": "převod na společného jmenovatele",
+          "redirection": "Zlomek [pojem]",
+          "isDetected": 0
+        },
+        {
+          "id": "Krácení zlomku [pojem]",
+          "description": "Není detekováno",
+          "text": "krácení",
+          "isDetected": 0
+        },
+        {
+          "id": "Racionální číslo [pojem]",
+          "description": "Není detekováno",
+          "text": "racionální čísla",
+          "redirection": "Zlomek [pojem]",
+          "isDetected": 0
+        },
+        {
+          "id": "Procento [pojem]",
+          "description": "Není detekováno ani přesměrováno",
+          "text": "procenta",
+          "isDetected": 0
+        },
+        {
+          "id": "Úrokování [pojem]",
+          "description": "Není detekováno ani přesměrováno",
+          "text": "úrokování",
+          "isDetected": 0
+        },
+        {
+          "id": "Proměnná [pojem]",
+          "description": "Není detekováno ani přesměrováno",
+          "text": "proměnná",
+          "isDetected": 0
+        },
+        {
+          "id": "Matematický výraz [pojem]",
+          "description": "Není detekováno ani přesměrováno",
+          "text": "výraz",
+          "isDetected": 0
+        },
+        {
+          "id": "Mnohočlen [pojem]",
+          "description": "Není detekováno ani přesměrováno",
+          "text": "mnohočleny",
+          "isDetected": 0
+        },
+        {
+          "id": "Vytýkání před závorku [pojem]",
+          "description": "Není detekováno ani přesměrováno",
+          "text": "vytýkání před závorku",
+          "isDetected": 0
+        },
+        {
+          "id": "Algebraické vzorce [pojem]",
+          "description": "Na toto je přesměrováno",
+          "text": "algebraické vzorce",
+          "isDetected": 0
+        },
+        {
+          "id": "(a+b)^2 [zkratka]",
+          "text": "(a+b)^2",
+          "redirection": "Algebraické vzorce [pojem]",
+          "isDetected": 1,
+          "regex": "\\( a \\+ b \\)( \\^)? 2",
+          "anchors": "2"
+        },
+        {
+          "id": "(a-b)^2 [zkratka]",
+          "text": "(a-b)^2",
+          "redirection": "Algebraické vzorce [pojem]",
+          "isDetected": 1,
+          "regex": "\\( a \\- b \\)( \\^)? 2",
+          "anchors": "2"
+        },
+        {
+          "id": "a^2-b^2 [zkratka]",
+          "text": "(a-b)^2",
+          "redirection": "Algebraické vzorce [pojem]",
+          "isDetected": 1,
+          "regex": "a( \\^)? 2 \\- b( \\^)? 2",
+          "anchors": "2"
+        },
+        {
+          "id": "Mocnina [pojem]",
+          "description": "Není detekováno ani přesměrováno",
+          "text": "mocniny",
+          "isDetected": 0
+        },
+        {
+          "id": "Odmocnina [pojem]",
+          "description": "Není detekováno ani přesměrováno",
+          "text": "odmocniny",
+          "isDetected": 0
+        },
+        {
+          "id": "Exponent [pojem]",
+          "description": "Není detekováno ani přesměrováno",
+          "text": "exponent",
+          "isDetected": 0
+        },
+        {
+          "id": "Logaritmus [pojem]",
+          "description": "Není detekováno ani přesměrováno",
+          "text": "logaritmus",
+          "isDetected": 0
+        },
+        {
+          "id": "Lineární rovnice [pojem]",
+          "description": "Není detekováno ani přesměrováno",
+          "text": "lineární rovnice",
+          "isDetected": 0
+        },
+        {
+          "id": "Lineární funkce [pojem]",
+          "description": "Není detekováno ani přesměrováno",
+          "text": "lineární funkce",
+          "isDetected": 0
+        },
+        {
+          "id": "Graf [pojem]",
+          "description": "Není detekováno ani přesměrováno",
+          "text": "graf",
+          "isDetected": 0
+        },
+        {
+          "id": "Ekvivalentní úprava [pojem]",
+          "description": "Není detekováno ani přesměrováno",
+          "text": "ekvivalentní úpravy",
+          "isDetected": 0
+        },
+        {
+          "id": "Zkouška správnosti [pojem]",
+          "description": "Není detekováno ani přesměrováno",
+          "text": "zkouška",
+          "isDetected": 0
+        },
+        {
+          "id": "Soustava lineárních rovnic [pojem]",
+          "description": "Není detekováno ani přesměrováno",
+          "text": "soustava lineárnch rovnic",
+          "isDetected": 0
+        },
+        {
+          "id": "Statistika [pojem]",
+          "description": "Není detekováno ani přesměrováno",
+          "text": "statistika",
+          "isDetected": 0
+        },
+        {
+          "id": "Modus [pojem]",
+          "description": "Není detekováno ani přesměrováno",
+          "text": "modus",
+          "isDetected": 0
+        },
+        {
+          "id": "Medián [pojem]",
+          "description": "Není detekováno ani přesměrováno",
+          "text": "medián",
+          "isDetected": 0
+        },
+        {
+          "id": "Přímá úměrnost [pojem]",
+          "description": "Není detekováno ani přesměrováno",
+          "text": "přímá úměrnost",
+          "isDetected": 0
+        },
+        {
+          "id": "Nepřímá úměrnost [pojem]",
+          "description": "Není detekováno ani přesměrováno",
+          "text": "nepřímá úměrnost",
+          "isDetected": 0
+        },
+        {
+          "id": "Slovní úloha o společné práci [pojem]",
+          "description": "Není detekováno ani přesměrováno, existuje samostatný pojem pro slovní úlohy",
+          "text": "slovní úlohy o společné práci",
+          "isDetected": 0
+        },
+        {
+          "id": "Trojčlenka [pojem]",
+          "description": "Není detekováno ani přesměrováno",
+          "text": "trojčlenka",
+          "isDetected": 0
+        },
+        {
+          "id": "Kvadratická funkce [pojem]",
+          "description": "Není detekováno ani přesměrováno",
+          "text": "kvadratická funkce",
+          "isDetected": 0
+        },
+        {
+          "id": "Kvadratická rovnice [pojem]",
+          "description": "Není detekováno ani přesměrováno",
+          "text": "kvadratická rovnice",
+          "isDetected": 0
+        },
+        {
+          "id": "Logaritmická funkce [pojem]",
+          "description": "Není detekováno ani přesměrováno",
+          "text": "logaritmická funkce",
+          "isDetected": 0
+        },
+        {
+          "id": "Logaritmická rovnice [pojem]",
+          "description": "Není detekováno ani přesměrováno",
+          "text": "logaritmická rovnice",
+          "isDetected": 0
+        },
+        {
+          "id": "Vlastnosti funkcí [pojem]",
+          "description": "Na toto je přesměrováno",
+          "text": "vlastnosti funkcí",
+          "isDetected": 0
+        },
+        {
+          "id": "Perioda funkce [pojem]",
+          "text": "perioda funkce",
+          "redirection": "Vlastnosti funkcí [pojem]",
+          "isDetected": 1,
+          "regex": "perioda funkce",
+          "anchors": "perioda"
+        },
+        {
+          "id": "Sudá funkce [pojem]",
+          "text": "sudá funkce",
+          "redirection": "Vlastnosti funkcí [pojem]",
+          "isDetected": 1,
+          "regex": "sudý funkce",
+          "anchors": "funkce"
+        },
+        {
+          "id": "Lichá funkce [pojem]",
+          "text": "lichá funkce",
+          "redirection": "Vlastnosti funkcí [pojem]",
+          "isDetected": 1,
+          "regex": "lichý funkce",
+          "anchors": "funkce"
+        },
+        {
+          "id": "Goniometrická funkce [pojem]",
+          "description": "Na toto je přesměrováno",
+          "text": "goniometrická funkce",
+          "isDetected": 0
+        },
+        {
+          "id": "Sinus [pojem]",
+          "text": "sinus",
+          "redirection": "Goniometrická funkce [pojem]",
+          "isDetected": 1,
+          "regex": "sinus",
+          "anchors": "sinus"
+        },
+        {
+          "id": "Cosinus [pojem]",
+          "text": "cosinus",
+          "redirection": "Goniometrická funkce [pojem]",
+          "isDetected": 1,
+          "regex": "(co|ko)sinus",
+          "anchors": "cosinus;kosinus"
+        },
+        {
+          "id": "Tangens [pojem]",
+          "text": "tangens",
+          "redirection": "Goniometrická funkce [pojem]",
+          "isDetected": 1,
+          "regex": "tangens",
+          "anchors": "tangens"
+        },
+        {
+          "id": "Cotangens [pojem]",
+          "text": "cotangens",
+          "redirection": "Goniometrická funkce [pojem]",
+          "isDetected": 1,
+          "regex": "(co|ko)tangens",
+          "anchors": "cotangens;kotangens"
+        },
+        {
+          "id": "Geometrie [pojem]",
+          "text": "geometrie",
+          "redirection": "Matematika [pojem]",
+          "isDetected": 1,
+          "regex": "(geometrie)",
+          "anchors": "geometrie"
+        },
+        {
+          "id": "Přímka [pojem]",
+          "text": "přímka",
+          "redirection": "Geometrie [pojem]",
+          "isDetected": 1,
+          "regex": "(přímka)",
+          "anchors": "přímka"
+        },
+        {
+          "id": "Rovina [pojem]",
+          "description": "Není detekováno ani přesměrováno",
+          "text": "rovina",
+          "isDetected": 0
+        },
+        {
+          "id": "Polorovina [pojem]",
+          "description": "Není detekováno ani přesměrováno",
+          "text": "polorovina",
+          "isDetected": 0
+        },
+        {
+          "id": "Úhel [pojem]",
+          "description": "Není detekováno ani přesměrováno",
+          "text": "úhel",
+          "isDetected": 0
+        },
+        {
+          "id": "Ostrý úhel [pojem]",
+          "description": "Není detekováno ani přesměrováno",
+          "text": "ostrý úhel",
+          "isDetected": 0
+        },
+        {
+          "id": "Tupý úhel [pojem]",
+          "description": "Není detekováno ani přesměrováno",
+          "text": "tupý úhel",
+          "isDetected": 0
+        },
+        {
+          "id": "Obvodový úhel [pojem]",
+          "description": "Není detekováno ani přesměrováno",
+          "text": "obvodový úhel",
+          "isDetected": 0
+        },
+        {
+          "id": "Středový úhel [pojem]",
+          "description": "Není detekováno ani přesměrováno",
+          "text": "středový úhel",
+          "isDetected": 0
+        },
+        {
+          "id": "Trojúhelník [pojem]",
+          "description": "Není detekováno ani přesměrováno",
+          "text": "trojúhelník",
+          "isDetected": 0
+        },
+        {
+          "id": "Pravoúhlý trojúhelník [pojem]",
+          "description": "Na toto je přesměrováno",
+          "text": "pravoúhlý trojúhelník",
+          "isDetected": 0
+        },
+        {
+          "id": "Přepona [pojem]",
+          "text": "přepona",
+          "redirection": "Pravoúhlý trojúhelník [pojem]",
+          "isDetected": 1,
+          "regex": "přepona",
+          "anchors": "přepona"
+        },
+        {
+          "id": "Odvěsna [pojem]",
+          "text": "odvěsna",
+          "redirection": "Pravoúhlý trojúhelník [pojem]",
+          "isDetected": 1,
+          "regex": "odvěsna",
+          "anchors": "odvěsna"
+        },
+        {
+          "id": "Pythagorova věta [pojem]",
+          "text": "Pythagorova věta",
+          "redirection": "Pravoúhlý trojúhelník [pojem]",
+          "isDetected": 1,
+          "regex": "Pythagorův věta",
+          "anchors": "věta"
+        },
+        {
+          "id": "Úhlopříčka [pojem]",
+          "description": "Není detekováno ani přesměrováno",
+          "text": "úhlopříčka",
+          "isDetected": 0
+        },
+        {
+          "id": "Rovnostranný trojúhelník [pojem]",
+          "description": "Není detekováno ani přesměrováno",
+          "text": "rovnostranný trojúhelník",
+          "isDetected": 0
+        },
+        {
+          "id": "Rovnoramenný trojúhelník [pojem]",
+          "description": "Není detekováno ani přesměrováno",
+          "text": "rovnoramenný trojúhelník",
+          "isDetected": 0
+        },
+        {
+          "id": "Výška trojúhelníku [pojem]",
+          "description": "Na toto je přesměrováno",
+          "text": "výška trojúhelníku",
+          "isDetected": 0
+        },
+        {
+          "id": "Ortocentrum [pojem]",
+          "text": "ortocentrum",
+          "redirection": "Výška trojúhelníku [pojem]",
+          "isDetected": 1,
+          "regex": "ortocentrum",
+          "anchors": "ortocentrum"
+        },
+        {
+          "id": "Těžnice trojúhelníku [pojem]",
+          "description": "Není detekováno ani přesměrováno",
+          "text": "těžnice trojúhelníku",
+          "isDetected": 0
+        },
+        {
+          "id": "Těžiště trojúhelníku [pojem]",
+          "description": "Není detekováno ani přesměrováno",
+          "text": "těžiště trojúhelníku",
+          "isDetected": 0
+        },
+        {
+          "id": "Kružnice opsaná [pojem]",
+          "description": "Není detekováno ani přesměrováno",
+          "text": "kružnice opsaná",
+          "isDetected": 0
+        },
+        {
+          "id": "Kružnice vepsaná [pojem]",
+          "description": "Není detekováno ani přesměrováno",
+          "text": "kružnice vepsaná",
+          "isDetected": 0
+        },
+        {
+          "id": "Kružnice [pojem]",
+          "description": "Není detekováno ani přesměrováno",
+          "text": "kružnice",
+          "isDetected": 0
+        },
+        {
+          "id": "Kruh [pojem]",
+          "description": "Není detekováno ani přesměrováno",
+          "text": "kruh",
+          "isDetected": 0
+        },
+        {
+          "id": "Poloměr [pojem]",
+          "description": "Není detekováno ani přesměrováno",
+          "text": "poloměr",
+          "isDetected": 0
+        },
+        {
+          "id": "Průměr [pojem]",
+          "description": "Není detekováno ani přesměrováno",
+          "text": "průměr",
+          "isDetected": 0
+        },
+        {
+          "id": "Střed kružnice [pojem]",
+          "description": "Není detekováno ani přesměrováno",
+          "text": "střed kružnice",
+          "isDetected": 0
+        },
+        {
+          "id": "Tečna [pojem]",
+          "description": "Není detekováno ani přesměrováno",
+          "text": "tečna",
+          "isDetected": 0
+        },
+        {
+          "id": "Sečna [pojem]",
+          "description": "Není detekováno ani přesměrováno",
+          "text": "sečna",
+          "isDetected": 0
+        },
+        {
+          "id": "Tětiva [pojem]",
+          "description": "Není detekováno ani přesměrováno",
+          "text": "tětiva",
+          "isDetected": 0
+        },
+        {
+          "id": "Thaletova věta [pojem]",
+          "description": "Není detekováno ani přesměrováno",
+          "text": "Thaletova věta",
+          "isDetected": 0
+        },
+        {
+          "id": "Thaletova kružnice [pojem]",
+          "description": "Není detekováno ani přesměrováno",
+          "text": "Thaletova kružnice",
+          "isDetected": 0
+        },
+        {
+          "id": "Úsečka [pojem]",
+          "description": "Není detekováno ani přesměrováno",
+          "text": "úsečka",
+          "isDetected": 0
+        },
+        {
+          "id": "Pravý úhel [pojem]",
+          "description": "Není detekováno ani přesměrováno",
+          "text": "pravý úhel",
+          "isDetected": 0
+        },
+        {
+          "id": "Kolmost [pojem]",
+          "description": "Není detekováno ani přesměrováno",
+          "text": "kolmost",
+          "isDetected": 0
+        },
+        {
+          "id": "Kolmice [pojem]",
+          "description": "Není detekováno ani přesměrováno",
+          "text": "kolmice",
+          "isDetected": 0
+        },
+        {
+          "id": "Osa úsečky [pojem]",
+          "description": "Není detekováno ani přesměrováno",
+          "text": "osa úsečky",
+          "isDetected": 0
+        },
+        {
+          "id": "Osa úhlu [pojem]",
+          "description": "Není detekováno ani přesměrováno",
+          "text": "osa úhlu",
+          "isDetected": 0
+        },
+        {
+          "id": "Shodnost [pojem]",
+          "description": "Není detekováno ani přesměrováno",
+          "text": "shodnost",
+          "isDetected": 0
+        },
+        {
+          "id": "Podobnost [pojem]",
+          "description": "Není detekováno ani přesměrováno",
+          "text": "podobnost",
+          "isDetected": 0
+        },
+        {
+          "id": "Věty o trojúhelnících [pojem]",
+          "description": "Je přesměrováno; není: usu -> usa, ssu -> ss",
+          "text": "věty o trojúhelnících",
+          "isDetected": 0
+        },
+        {
+          "id": "Věta o trojúhelnících - sss [zkratka]",
+          "text": "sss",
+          "redirection": "Věty o trojúhelnících [pojem]",
+          "isDetected": 1,
+          "regex": "sss",
+          "anchors": "sss"
+        },
+        {
+          "id": "Věta o trojúhelnících - sus [zkratka]",
+          "text": "sus",
+          "redirection": "Věty o trojúhelnících [pojem]",
+          "isDetected": 1,
+          "regex": "sus",
+          "anchors": "sus"
+        },
+        {
+          "id": "Věta o trojúhelnících - uu [zkratka]",
+          "text": "uu",
+          "redirection": "Věty o trojúhelnících [pojem]",
+          "isDetected": 1,
+          "regex": "uum",
+          "anchors": "uum"
+        },
+        {
+          "id": "Shodné zobrazení [pojem]",
+          "description": "Na toto je přesměrováno",
+          "text": "shodná zobrazení",
+          "isDetected": 0
+        },
+        {
+          "id": "Osová souměrnost [pojem]",
+          "text": "osová souměrnost",
+          "redirection": "Shodné zobrazení [pojem]",
+          "isDetected": 1,
+          "regex": "osový souměrnost",
+          "anchors": "souměrnost"
+        },
+        {
+          "id": "Středová souměrnost [pojem]",
+          "text": "středová souměrnost",
+          "redirection": "Shodné zobrazení [pojem]",
+          "isDetected": 1,
+          "regex": "osový souměrnost",
+          "anchors": "souměrnost"
+        },
+        {
+          "id": "Stejnolehlost [pojem]",
+          "description": "Není detekováno ani přesměrováno",
+          "text": "stejnolehlost",
+          "isDetected": 0
+        },
+        {
+          "id": "Prostor [pojem]",
+          "description": "Není detekováno ani přesměrováno",
+          "text": "prostor",
+          "isDetected": 0
+        },
+        {
+          "id": "Jehlan [pojem]",
+          "description": "Není detekováno ani přesměrováno",
+          "text": "jehlan",
+          "isDetected": 0
+        },
+        {
+          "id": "Kužel [pojem]",
+          "description": "Není detekováno ani přesměrováno",
+          "text": "kužel",
+          "isDetected": 0
+        },
+        {
+          "id": "Krychle [pojem]",
+          "description": "Není detekováno ani přesměrováno",
+          "text": "krychle",
+          "isDetected": 0
+        },
+        {
+          "id": "Rotační válec [pojem]",
+          "description": "Není detekováno ani přesměrováno",
+          "text": "válec",
+          "isDetected": 0
+        },
+        {
+          "id": "Koule [pojem]",
+          "description": "Není detekováno ani přesměrováno",
+          "text": "koule",
+          "isDetected": 0
+        },
+        {
+          "id": "Kvádr [pojem]",
+          "description": "Není detekováno ani přesměrováno",
+          "text": "kvádr",
+          "isDetected": 0
+        },
+        {
+          "id": "Hranol [pojem]",
+          "description": "Není detekováno ani přesměrováno",
+          "text": "hranol",
+          "isDetected": 0
+        },
+        {
+          "id": "Podstava tělesa [pojem]",
+          "description": "Není detekováno ani přesměrováno",
+          "text": "podstava",
+          "isDetected": 0
+        },
+        {
+          "id": "Obsah rovinného útvaru [pojem]",
+          "description": "Není detekováno ani přesměrováno",
+          "text": "obsah",
+          "isDetected": 0
+        },
+        {
+          "id": "Obvod rovinného útvaru [pojem]",
+          "description": "Není detekováno ani přesměrováno",
+          "text": "obvod",
+          "isDetected": 0
+        },
+        {
+          "id": "Objem tělesa [pojem]",
+          "description": "Není detekováno ani přesměrováno",
+          "text": "objem",
+          "isDetected": 0
+        },
+        {
+          "id": "Povrch tělesa [pojem]",
+          "description": "Není detekováno ani přesměrováno",
+          "text": "povrch",
+          "isDetected": 0
+        },
+        {
+          "id": "Plášť tělesa [pojem]",
+          "description": "Není detekováno ani přesměrováno",
+          "text": "plášť",
+          "isDetected": 0
+        },
+        {
+          "id": "Rovinný útvar [pojem]",
+          "description": "Na toto je přesměrováno",
+          "text": "rovinný útvar",
+          "isDetected": 0
+        },
+        {
+          "id": "Čtverec [pojem]",
+          "text": "čtverec",
+          "redirection": "Rovinný útvar [pojem]",
+          "isDetected": 1,
+          "regex": "čtverec",
+          "anchors": "čtverec"
+        },
+        {
+          "id": "Obdélník [pojem]",
+          "text": "obdélník",
+          "redirection": "Rovinný útvar [pojem]",
+          "isDetected": 1,
+          "regex": "obdélník",
+          "anchors": "obdélník"
+        },
+        {
+          "id": "Lichoběžník [pojem]",
+          "text": "lichoběžník",
+          "redirection": "Rovinný útvar [pojem]",
+          "isDetected": 1,
+          "regex": "lichoběžník",
+          "anchors": "lichoběžník"
+        },
+        {
+          "id": "Rovnoběžník [pojem]",
+          "text": "rovnoběžník",
+          "redirection": "Rovinný útvar [pojem]",
+          "isDetected": 1,
+          "regex": "rovnoběžník",
+          "anchors": "rovnoběžník"
+        },
+        {
+          "id": "Mnohoúhelník [pojem]",
+          "text": "mnohoúhelník",
+          "redirection": "Rovinný útvar [pojem]",
+          "isDetected": 1,
+          "regex": "mnohoúhelník",
+          "anchors": "mnohoúhelník"
         }
       ]
     }

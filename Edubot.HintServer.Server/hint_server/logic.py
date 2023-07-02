@@ -12,10 +12,11 @@ from hint_server.hints import generateSearchHints, generateWizardHints
 T = TypeVar("T")
 
 
-
 def asNotNone(value: Optional[T]) -> T:
     assert value is not None
     return value
+
+
 def defaultIfNone(value: Optional[T], defaultValue: T) -> T:
     return defaultValue if value is None else value
 
@@ -30,19 +31,20 @@ def search(request: models.SearchRequest, config: models.AppConfiguration) -> mo
     collectionConfig = asNotNone(config.collections)[defaultCollection]
     hintingparams = getOrCreateSolrUrlParams(collectionConfig)
 
-    # Conditionally redirect
-    if False:
-        if request.detectEnums == True or request.doRedirection == True:
-            redirectRequest = mapSearchRequestToRedirectRequest(
-                request, collectionConfig)
-            redirectResponse = redirect(redirectRequest, config)
+    # prepare lemmatized text if lemmatizer URL is non-empty
+    lemmatized = lemmatize(collectionConfig.lemmatizeUrlPattern, request.query)
+    request.lemmatizedQuery = lemmatized.lemmatized
 
-            if redirectResponse.anyDetection or redirectResponse.anyRedirection:
-                response.originalQuery = request.query
-                response.redirectedFromReducedQuery = redirectResponse.detectedTextValue
-                response.redirectedFromEnumValues = redirectResponse.detectedEnumValues
-                request = combineRedirectResponseAndOldSearchRequestToRedirectedSearchRequest(
-                    request, redirectResponse, collectionConfig)
+    # Conditionally redirect
+    if request.detectEnums is True or request.doRedirection is True:
+        redirectRequest = mapSearchRequestToRedirectRequest(request, lemmatized, collectionConfig)
+        redirectResponse = redirect(redirectRequest, collectionConfig)
+
+        if redirectResponse.anyDetection or redirectResponse.anyRedirection:
+            response.originalQuery = request.query
+            response.redirectedFromReducedQuery = None  # XXX not sure why this isn't actually used
+            response.redirectedFromEnumValues = []
+            request = addRedirectToResponse(request, redirectResponse, collectionConfig)
 
     # Add redirected values to response
     if response.originalQuery is None:
@@ -59,15 +61,15 @@ def search(request: models.SearchRequest, config: models.AppConfiguration) -> mo
         item.enumType): True for item in request.enumValues if item.isNotRelevant}
 
     # Generate URL for Solr
-    url = formatUrl(collectionConfig.solrQueryUrlPattern, collectionConfig.lemmatizeUrlPattern,
-                    request.query, hintingparams, enumValues, notRelevantFields)
+    url = formatUrl(collectionConfig.solrQueryUrlPattern, request.query, request.lemmatizedQuery,
+                    hintingparams, enumValues, notRelevantFields)
 
     # Call Solr
     connection = urlopen(url)
     solrResponse = json.load(connection)
 
     # Generate hints
-    if request.returnSearchHints == True:
+    if request.returnSearchHints is True:
         candidates = generateSearchHints(
             enumValues, notRelevantFields, solrResponse, collectionConfig)
         response.searchHints = [downgradeSearchHint2EnumItem(
@@ -75,7 +77,7 @@ def search(request: models.SearchRequest, config: models.AppConfiguration) -> mo
     else:
         response.searchHints = None
 
-    if request.returnWizardHints == True:
+    if request.returnWizardHints is True:
         candidates = generateWizardHints(
             enumValues, notRelevantFields, solrResponse, collectionConfig)
         if len(candidates) > 0:
@@ -122,25 +124,46 @@ def hint(request: models.HintRequest, config: models.AppConfiguration) -> models
     return hintResponse
 
 
-def redirect(request: models.RedirectRequest, config: dict) -> models.RedirectResponse:
+def redirect(request: models.RedirectRequest, config: models.CollectionConfiguration) -> models.RedirectResponse:
     response = models.RedirectResponse()
+    evCode2Val = getOrCreateValueCodeToValueMapping(config)
+
+    matches = [(kw, kw.regex.search(request.lemmatized.lemmatized)) for kw in config.keywords if kw.isDetected and kw.regex]
+    enum_matches = [(kw, m) for kw, m in matches if m and kw.enumValueCode]
 
     # Detect
-    if request.detectEnums == True:
-        pass # TODO
+    if request.detectEnums is True and enum_matches:
+        # remove any matches that have enumValueCode from both plain and lemmatized text
+        enum_matches.sort(reverse=True, key=lambda i: i[1].start())
+        reduced_text = request.lemmatized.plain
+        reduced_lemmas = request.lemmatized.lemmatized
+        enum_ret = []
+        # XXX if redirection is needed, we'd need to work with alignment as well here (& recompute everything properly)
+        for kw, m in enum_matches:
+            reduced_text = reduced_text[:request.lemmatized.mapIndex(m.start())] + reduced_text[request.lemmatized.mapIndex(m.end()):]
+            reduced_lemmas = reduced_lemmas[:m.start()] + reduced_lemmas[m.end():]
+            enum_ret.append(evCode2Val.get(kw.enumValueCode))
+        # set resulting values
+        response.anyDetection = True
+        response.detectedTextValue = reduced_text.replace('  ', ' ').strip()
+        response.detectedLemmatizedValue = reduced_lemmas.replace('  ', ' ').strip()
+        response.detectedEnumValues = enum_ret
+        response.detectedNotRelevantValues = [field for field in request.notRelevantValues]
     else:
         response.anyDetection = False
         response.detectedTextValue = request.textValue
+        response.detectedLemmatizedValue = request.lemmatized.lemmatized
         response.detectedEnumValues = request.enumValues
         response.detectedNotRelevantValues = [field for field in request.notRelevantValues]
 
     # Redirect
-    if request.doRedirection == True:
-        pass # TODO
+    if request.doRedirection is True:
+        pass  # TODO
     else:
         response.anyRedirection = False
         response.redirectedTextValue = response.detectedTextValue
         response.redirectedEnumValues = response.detectedEnumValues
+        response.redirectedLemmatizedValue = response.detectedLemmatizedValue
         response.redirectedNotRelevantValues = response.redirectedNotRelevantValues
 
     return response
@@ -181,24 +204,24 @@ def getOrCreateValueCodeToTextMapping(collectionConfig: models.CollectionConfigu
     return mapping
 
 
-def getOrCreateValueFieldAndTextToValue(collectionConfig: models.CollectionConfiguration) -> dict[(str, str), models.CollectionConfigurationEnumValue]:
-    if collectionConfig.precomputedValueFieldAndTextToValue is not None:
-        return collectionConfig.precomputedValueFieldAndTextToValue
+def getOrCreateValueCodeToValueMapping(collectionConfig: models.CollectionConfiguration) -> dict[(str, str), models.CollectionConfigurationEnumValue]:
+    if collectionConfig.precomputedValueCodeToValue is not None:
+        return collectionConfig.precomputedValueCodeToValue
 
-    mapping = {(asNotNone(ev.field), asNotNone(ev.text))
-                : ev for ev in collectionConfig.enumValues}
-    collectionConfig.precomputedValueFieldAndTextToValue = mapping
+    mapping = {asNotNone(ev.code): ev for ev in collectionConfig.enumValues}
+    collectionConfig.precomputedValueCodeToValue = mapping
 
     return mapping
 
 
-def mapSearchRequestToRedirectRequest(searchRequest: models.SearchRequest, collectionConfig: models.CollectionConfiguration) -> models.RedirectRequest:
+def mapSearchRequestToRedirectRequest(searchRequest: models.SearchRequest, lemmatized: models.LemmatizedString, collectionConfig: models.CollectionConfiguration) -> models.RedirectRequest:
     evCode2Text = getOrCreateValueCodeToTextMapping(collectionConfig)
 
     req = models.RedirectRequest()
     req.detectEnums = searchRequest.detectEnums
     req.doRedirection = searchRequest.doRedirection
     req.textValue = searchRequest.query
+    req.lemmatized = lemmatized
     req.enumValues = {enumList.enumType: [evCode2Text[
         enumListItem.valueCode] for enumListItem in enumList.values] for enumList in searchRequest.enumValues}
     req.notRelevantValues = [asNotNone(
@@ -207,29 +230,35 @@ def mapSearchRequestToRedirectRequest(searchRequest: models.SearchRequest, colle
     return req
 
 
-def combineRedirectResponseAndOldSearchRequestToRedirectedSearchRequest(oldSearchRequest: models.SearchRequest, redirectResponse: models.RedirectResponse, collectionConfig: models.CollectionConfiguration) -> models.SearchRequest:
-    evFieldText2EnumValue = getOrCreateValueFieldAndTextToValue(
-        collectionConfig)
+def addRedirectToResponse(oldSearchRequest: models.SearchRequest, redirectResponse: models.RedirectResponse, collectionConfig: models.CollectionConfiguration) -> models.SearchRequest:
 
     req = models.SearchRequest()
     req.detectEnums = oldSearchRequest.detectEnums
     req.doRedirection = oldSearchRequest.doRedirection
     req.enumValues: list[models.EnumList] = []
+    req.query = redirectResponse.detectedTextValue
+    req.lemmatizedQuery = redirectResponse.detectedLemmatizedValue
 
-    for field, values in asNotNone(redirectResponse.enumValues).items():
+    # group detected enum values by field
+    fieldVals = {}
+    for val in asNotNone(redirectResponse.detectedEnumValues):
+        fieldVals[val.field] = fieldVals.get(val.field, [])
+        fieldVals[val.field].append(val)
+
+    # add the enum values in the correct format
+    for field, values in fieldVals.items():
         enumList = models.EnumList()
         enumList.isNotRelevant = False
         enumList.enumType = field
         enumList.values: list[models.EnumListItem] = []
         for value in values:
-            mappedEnumValue = evFieldText2EnumValue[(field, value)]
             enumListItem = models.EnumListItem()
-            enumListItem.id = mappedEnumValue.id
-            enumListItem.valueCode = mappedEnumValue.code
+            enumListItem.id = value.id
+            enumListItem.valueCode = value.code
             enumList.values.append(enumListItem)
         req.enumValues.append(enumList)
 
-    for field in asNotNone(redirectResponse.notRelevantValues):
+    for field in asNotNone(redirectResponse.detectedNotRelevantValues):
         enumList = models.EnumList()
         enumList.isNotRelevant = True
         enumList.enumType = field
@@ -239,22 +268,36 @@ def combineRedirectResponseAndOldSearchRequestToRedirectedSearchRequest(oldSearc
 
 
 def lemmatize(urlPattern: str, text: str):
-    """Lemmatize using Morphodita API"""
-    url = urlPattern.replace("{text}", quote(text))
-    connection = urlopen(url)
-    response = json.load(connection)
-    return ' '.join([tok['lemma'] for sent in response['result'] for tok in sent])
+    """Lemmatize using Morphodita API, if URL is set up; produce alignment between original and lemmatized"""
+    if urlPattern:
+        # get the lemmatized version
+        url = urlPattern.replace("{text}", quote(text))
+        connection = urlopen(url)
+        response = json.load(connection)
+        # compute alignment
+        lemmatized = ''
+        alignment = [(0, 0)]
+        plain_pos = 0
+        for tok in [tok for sent in response['result'] for tok in sent]:
+            space = tok.get('space', '')
+            lemmatized = lemmatized + tok['lemma'] + space
+            plain_pos += len(tok['token']) + len(space)
+            alignment.append((len(lemmatized), plain_pos))
+        return models.LemmatizedString(plain=text, lemmatized=lemmatized, alignment=alignment)
+    else:
+        # backoff to no lemmatization
+        return models.LemmatizedString(plain=text, lemmatized=text)
 
 
-def formatUrl(urlPattern: Optional[str], lemmatizeUrlPattern: Optional[str],
-              text: Optional[str], hintingParams: Optional[str], enumValues: Optional[dict[str,list[str]]],
-              notRelevantFields: Optional[dict[str,bool]]) -> str:
+def formatUrl(urlPattern: Optional[str],
+              text: Optional[str], lemmatizedText: Optional[str],
+              hintingParams: Optional[str], enumValues: Optional[dict[str, list[str]]],
+              notRelevantFields: Optional[dict[str, bool]]) -> str:
 
-    urlPattern, text, hintingParams, enumValues, notRelevantFields = defaultIfNone(urlPattern,""), defaultIfNone(text, ""), defaultIfNone(hintingParams, ""), defaultIfNone(enumValues, {}), defaultIfNone(notRelevantFields, {})
+    urlPattern, text, hintingParams, enumValues, notRelevantFields = defaultIfNone(urlPattern, ""), defaultIfNone(text, ""), defaultIfNone(hintingParams, ""), defaultIfNone(enumValues, {}), defaultIfNone(notRelevantFields, {})
 
-
-    # prepare lemmatized text if lemmatizer URL is non-empty
-    lemmatized_text = lemmatize(lemmatizeUrlPattern, text) if lemmatizeUrlPattern else text
+    # default lemmatized to plain text, if not available
+    lemmatized_text = defaultIfNone(lemmatizedText, text)
 
     repls = list(re.finditer(r'(\\*)(\{[^\}]*\})', urlPattern))
 
