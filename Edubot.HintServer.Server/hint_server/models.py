@@ -62,6 +62,7 @@ class SearchRequest(ApiModel):
     def _addValuesFromDict(self, obj: dict[str, Any]):
         self.userId = getObjectFromDict(obj, "userId", str)
         self.query = getObjectFromDict(obj, "query", str)
+        self.lemmatizedQuery = getObjectFromDict(obj, "lemmatizedQuery", str)
         self.enumValues = getArrayFromDict(
             obj, "enumValues", lambda x: EnumList(x))
         self.startIndex = getNumberFromDict(obj, "startIndex", int)
@@ -251,9 +252,11 @@ class RedirectResponse(ApiModel):
         self.anyDetection = getNumberFromDict(obj, "anyDetection", bool)
         self.anyRedirection = getNumberFromDict(obj, "anyRedirection", bool)
         self.detectedTextValue = getObjectFromDict(obj, "detectedTextValue", str)
+        self.detectedLemmatizedValue = getObjectFromDict(obj, "detectedLemmatizedValue", str)
         self.detectedEnumValues : Optional[dict[str, list[str]]] = getObjectFromDict(obj, "detectedEnumValues", dict)
         self.detectedNotRelevantValues = getArrayFromDict(obj, "redirectedNotRelevantValues", lambda x: str(x))
         self.redirectedTextValue = getObjectFromDict(obj, "redirectedTextValue", str)
+        self.redirectedLemmatizedValue = getObjectFromDict(obj, "redirectedLemmatizedValue", str)
         self.redirectedEnumValues : Optional[dict[str, list[str]]] = getObjectFromDict(obj, "redirectedEnumValues", dict)
         self.redirectedNotRelevantValues = getArrayFromDict(obj, "redirectedNotRelevantValues", lambda x: str(x))
 
