@@ -22,6 +22,7 @@ def defaultIfNone(value: Optional[T], defaultValue: T) -> T:
 
 
 def search(request: models.SearchRequest, config: models.AppConfiguration) -> models.SearchResponse:
+    originalRequest = models.SearchRequest(request.__dict__)  # store a copy of the original request if needed for backoff
     response = models.SearchResponse()
     response.originalQuery = request.query
 
@@ -36,6 +37,7 @@ def search(request: models.SearchRequest, config: models.AppConfiguration) -> mo
     request.lemmatizedQuery = lemmatized.lemmatized
 
     # Conditionally redirect
+    redirectResponse = None
     if request.detectEnums is True or request.doRedirection is True:
         redirectRequest = mapSearchRequestToRedirectRequest(request, lemmatized, collectionConfig)
         redirectResponse = redirect(redirectRequest, collectionConfig)
@@ -68,6 +70,11 @@ def search(request: models.SearchRequest, config: models.AppConfiguration) -> mo
     connection = urlopen(url)
     solrResponse = json.load(connection)
 
+    # If we made enum detection and then didn't find anything, back off & do search w/o detection, using the orig. request
+    if int(solrResponse["response"]["numFound"]) == 0 and redirectResponse is not None and redirectResponse.anyDetection:
+        originalRequest.detectEnums = False
+        return search(originalRequest, config)
+
     # Generate hints
     if request.returnSearchHints is True:
         candidates = generateSearchHints(
@@ -88,7 +95,7 @@ def search(request: models.SearchRequest, config: models.AppConfiguration) -> mo
 
     # Not implemented
     response.startIndex = 0
-    response.itemCount = 0
+    response.itemCount = int(solrResponse["response"]["numFound"])
     response.items: list[models.ResultItem] = []
     response.totalCount = 0
     response.dropdownValues: list[models.EnumCountList] = []
