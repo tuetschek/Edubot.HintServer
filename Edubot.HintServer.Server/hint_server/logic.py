@@ -1,6 +1,7 @@
 import json
 import re
 import logging
+import copy
 from urllib.request import urlopen
 from urllib.parse import quote
 from typing import TypeVar, Optional
@@ -22,7 +23,7 @@ def defaultIfNone(value: Optional[T], defaultValue: T) -> T:
 
 
 def search(request: models.SearchRequest, config: models.AppConfiguration) -> models.SearchResponse:
-    originalRequest = models.SearchRequest(request.__dict__)  # store a copy of the original request if needed for backoff
+    originalRequest =  copy.copy(request) # store a copy of the original request if needed for backoff
     response = models.SearchResponse()
     response.originalQuery = request.query
 
