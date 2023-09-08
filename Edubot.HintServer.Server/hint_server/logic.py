@@ -58,10 +58,13 @@ def search(request: models.SearchRequest, config: models.AppConfiguration) -> mo
     # Preprocess
     evCode2Text = getOrCreateValueCodeToTextMapping(collectionConfig)
 
-    enumValues = {ev.enumType: [evCode2Text[value.valueCode] for value in ev.values] for ev in (
-        [] if request.enumValues is None else request.enumValues) if not ev.isNotRelevant}
-    notRelevantFields = {asNotNone(
-        item.enumType): True for item in request.enumValues if item.isNotRelevant}
+    enumValues = {ev.enumType: [evCode2Text[value.valueCode]
+                                for value in ev.values]
+                  for ev in ([] if request.enumValues is None else request.enumValues)
+                  if not ev.isNotRelevant}
+    notRelevantFields = {asNotNone(item.enumType): True
+                         for item in request.enumValues
+                         if item.isNotRelevant}
 
     # Generate URL for Solr
     url = formatUrl(collectionConfig.solrQueryUrlPattern, request.query, request.lemmatizedQuery,
@@ -78,19 +81,15 @@ def search(request: models.SearchRequest, config: models.AppConfiguration) -> mo
 
     # Generate hints
     if request.returnSearchHints is True:
-        candidates = generateSearchHints(
-            enumValues, notRelevantFields, solrResponse, collectionConfig)
-        response.searchHints = [downgradeSearchHint2EnumItem(
-            x, collectionConfig) for x in candidates]
+        candidates = generateSearchHints(enumValues, notRelevantFields, solrResponse, collectionConfig)
+        response.searchHints = [downgradeSearchHint2EnumItem(x, collectionConfig) for x in candidates]
     else:
         response.searchHints = None
 
     if request.returnWizardHints is True:
-        candidates = generateWizardHints(
-            enumValues, notRelevantFields, solrResponse, collectionConfig)
+        candidates = generateWizardHints(enumValues, notRelevantFields, solrResponse, collectionConfig)
         if len(candidates) > 0:
-            response.wizardHints = downgradeWizardHint2EnumList(
-                candidates[0], collectionConfig)
+            response.wizardHints = downgradeWizardHint2EnumList(candidates[0], collectionConfig)
     else:
         response.wizardHints = None
 

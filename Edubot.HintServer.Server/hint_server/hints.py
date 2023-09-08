@@ -20,7 +20,7 @@ def generateSearchHints(enumValues: Optional[dict[str, list[str]]], notRelevantF
     candidates = []
 
     for field in facetObj:
-        if field in specifiedFields:
+        if field in specifiedFields or field not in collectionConfig.searchHintFields:
             continue
 
         fieldObj = facetObj[field]
@@ -53,7 +53,7 @@ def generateWizardHints(enumValues: Optional[dict[str, list[str]]], notRelevantF
     candidates = []
 
     for field in facetObj:
-        if field in specifiedFields:
+        if field in specifiedFields or field not in collectionConfig.wizardHintFields:
             continue
 
         fieldObj = facetObj[field]
