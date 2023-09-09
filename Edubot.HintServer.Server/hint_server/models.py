@@ -305,6 +305,7 @@ class CollectionConfiguration(ApiModel):
         self.precomputedSolrUrlParams: Optional[str] = None
         self.precomputedValueCodeToValueText: Optional[dict[str, str]] = None
         self.precomputedValueCodeToValue: Optional[dict[str, CollectionConfigurationEnumValue]] = None
+        self.precomputedUnkIrrVals: Optional[set[(str, str)]] = None
 
 
 class CollectionConfigurationEnumValue(ApiModel):

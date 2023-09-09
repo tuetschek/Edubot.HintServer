@@ -1,5 +1,4 @@
-from typing import Any, Optional
-
+from typing import Optional
 from hint_server.models import NotRelevantFields, SolrResponse, CollectionConfiguration, SearchHint, WizardHint
 
 
@@ -16,8 +15,8 @@ def generateSearchHints(enumValues: Optional[dict[str, list[str]]], notRelevantF
 
     totalFound = int(solrResponse["response"]["numFound"])
     facetObj = solrResponse["stats"]["stats_fields"][idField]["facets"]
-
     candidates = []
+    unkIrrVals = getOrCreateUnkIrrVals(collectionConfig)
 
     for field in facetObj:
         if field in specifiedFields or field not in collectionConfig.searchHintFields:
@@ -26,6 +25,8 @@ def generateSearchHints(enumValues: Optional[dict[str, list[str]]], notRelevantF
         fieldObj = facetObj[field]
 
         for fieldValue in fieldObj:
+            if not fieldValue or (field, fieldValue) in unkIrrVals:
+                continue
             count = int(fieldObj[fieldValue]["count"])
             score = (count ** 2) + ((totalFound - count) ** 2)
             candidates.append((field, fieldValue, -score))
@@ -34,6 +35,20 @@ def generateSearchHints(enumValues: Optional[dict[str, list[str]]], notRelevantF
         candidates, key=lambda item: item[2], reverse=True)[0:5]
 
     return list(map(lambda c: SearchHint(fieldsAndValues={c[0]: c[1]}), candidates))
+
+
+def getOrCreateUnkIrrVals(collectionConfig: CollectionConfiguration) -> set[(str, str)]:
+    """Pick out values marked as unknown or irrelevant from the enum values list, so we can ignore them in hints."""
+    if collectionConfig.precomputedUnkIrrVals is not None:
+        return collectionConfig.precomputedUnkIrrVals
+
+    unkIrrSet = set()
+    for ev in collectionConfig.enumValues:
+        if ev.isUnknown or ev.isNotRelevant:
+            unkIrrSet.add((ev.field, ev.text))
+
+    collectionConfig.precomputedUnkIrrVals = unkIrrSet
+    return unkIrrSet
 
 
 def generateWizardHints(enumValues: Optional[dict[str, list[str]]], notRelevantFields: NotRelevantFields, solrResponse: SolrResponse, collectionConfig: CollectionConfiguration) -> list[WizardHint]:
@@ -49,8 +64,8 @@ def generateWizardHints(enumValues: Optional[dict[str, list[str]]], notRelevantF
 
     totalFound = int(solrResponse["response"]["numFound"])
     facetObj = solrResponse["stats"]["stats_fields"][idField]["facets"]
-
     candidates = []
+    unkIrrVals = getOrCreateUnkIrrVals(collectionConfig)
 
     for field in facetObj:
         if field in specifiedFields or field not in collectionConfig.wizardHintFields:
@@ -71,8 +86,9 @@ def generateWizardHints(enumValues: Optional[dict[str, list[str]]], notRelevantF
         fieldValues = sorted(
             fieldObj, key=lambda fieldValue: fieldObj[fieldValue]["count"], reverse=True)
 
-        # remove empty values
-        fieldValues = [fieldValue for fieldValue in fieldValues if fieldValue]
+        # remove empty & irrelevant & unknown values
+        fieldValues = [fieldValue for fieldValue in fieldValues if fieldValue and (field, fieldValue) not in unkIrrVals]
+
         # skip if we have nothing left, or the only value is set for *all* results, so it doesn't help disambiguate
         if not fieldValues or len(fieldValues) == 1 and fieldObj[fieldValues[0]]["count"] == totalFound:
             continue

@@ -105,14 +105,14 @@
           "Field": "stupen_vzdelavani",
           "Text": "není relevantní",
           "IsUnknown": false,
-          "IsNotRelevant": false
+          "IsNotRelevant": true
         },
         {
           "Id": 135,
           "Code": "2-NU",
           "Field": "stupen_vzdelavani",
           "Text": "nelze určit",
-          "IsUnknown": false,
+          "IsUnknown": true,
           "IsNotRelevant": false
         },
         {
@@ -1009,14 +1009,14 @@
           "Field": "gramotnost",
           "Text": "není relevantní",
           "IsUnknown": false,
-          "IsNotRelevant": false
+          "IsNotRelevant": true
         },
         {
           "Id": 76,
           "Code": "4-NU",
           "Field": "gramotnost",
           "Text": "nelze určit",
-          "IsUnknown": false,
+          "IsUnknown": true,
           "IsNotRelevant": false
         }
       ],
