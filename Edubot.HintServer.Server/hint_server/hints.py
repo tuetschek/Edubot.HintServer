@@ -45,7 +45,7 @@ def getOrCreateUnkIrrVals(collectionConfig: CollectionConfiguration) -> set[(str
     unkIrrSet = set()
     for ev in collectionConfig.enumValues:
         if ev.isUnknown or ev.isNotRelevant:
-            unkIrrSet.add((ev.field, ev.text))
+            unkIrrSet.add((ev.field, getattr(ev, collectionConfig.searchField)))
 
     collectionConfig.precomputedUnkIrrVals = unkIrrSet
     return unkIrrSet
