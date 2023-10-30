@@ -243,6 +243,7 @@ def addRedirectToResponse(oldSearchRequest: models.SearchRequest, redirectRespon
     req.detectEnums = oldSearchRequest.detectEnums
     req.doRedirection = oldSearchRequest.doRedirection
     req.returnSearchHints = oldSearchRequest.returnSearchHints
+    req.returnWizardHints = oldSearchRequest.returnWizardHints
     req.enumValues: list[models.EnumList] = []
     req.query = redirectResponse.detectedTextValue
     req.lemmatizedQuery = redirectResponse.detectedLemmatizedValue
